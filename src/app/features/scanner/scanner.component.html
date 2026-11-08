@@ -1,0 +1,186 @@
+<section class="section-shell page-intro compact">
+  <p class="eyebrow">ESPACE ORGANISATEUR / DÉMONSTRATION NON SÉCURISÉE</p>
+  <h1>Contrôle des accès · 72h.</h1>
+  <p>
+    Soirée cinéma des 72h · consultation par code ou QR code, entrées et
+    popcorn.
+  </p>
+  <a routerLink="/admin" class="text-link"
+    >Voir le tableau de bord <app-icon name="ArrowUpRight"
+  /></a>
+</section>
+<section class="section-shell scanner-layout">
+  <div class="panel">
+    <p class="eyebrow">SOIRÉE CINÉMA DES 72H</p>
+    <p class="small muted">
+      Date de contrôle fictive :
+      <strong>{{ event().simulationDate | date: "dd/MM/yyyy" }}</strong
+      >. La validité est évaluée à cette date. La date officielle du cinéma
+      reste à confirmer.
+    </p>
+    <div class="filter-tabs" role="group" aria-label="Mode de consultation">
+      <button
+        type="button"
+        [class.active]="mode() === 'code'"
+        [attr.aria-pressed]="mode() === 'code'"
+        (click)="mode.set('code')"
+      >
+        Saisir un code
+      </button>
+      <button
+        type="button"
+        [class.active]="mode() === 'qr'"
+        [attr.aria-pressed]="mode() === 'qr'"
+        (click)="mode.set('qr')"
+      >
+        Scanner un QR code
+      </button>
+    </div>
+    @if (mode() === "qr") {
+      <app-qr-reader (decoded)="sample($event)" />
+    } @else {
+      <form (ngSubmit)="verify()">
+        <label for="credential-id">Code du billet ou numéro membre</label
+        ><input
+          id="credential-id"
+          name="credential"
+          [ngModel]="credential()"
+          (ngModelChange)="credential.set($event); checkedId.set('')"
+          autocomplete="off"
+          autocapitalize="none"
+          spellcheck="false"
+          placeholder="T-… ou CI-… (identifiant QR accepté)"
+        /><button class="button full-width" type="submit">
+          Vérifier l’accès <app-icon name="ArrowRight" />
+        </button>
+      </form>
+      <p class="small muted">
+        Le code de consultation figure sur le billet ou la carte, sous le QR
+        code. Un lecteur USB peut aussi saisir l’identifiant QR dans ce champ.
+      </p>
+    }
+  </div>
+  <div>
+    <div class="panel scan-result" aria-live="polite">
+      @if (result(); as result) {
+        <span
+          class="result-icon"
+          [class.result-valid]="
+            result.status === 'valid-member' || result.status === 'valid-ticket'
+          "
+          [class.result-used]="result.status === 'used'"
+          ><app-icon
+            [name]="
+              result.status === 'valid-member' ||
+              result.status === 'valid-ticket'
+                ? 'ShieldCheck'
+                : 'CircleAlert'
+            "
+            [size]="36"
+        /></span>
+        <p class="eyebrow">RÉSULTAT DU CONTRÔLE SIMULÉ</p>
+        <h2>{{ result.title }}</h2>
+        <p>{{ result.detail }}</p>
+        @if (result.order; as order) {
+          <div class="scan-identity">
+            <strong
+              >{{ order.member.firstName }} {{ order.member.lastName }}</strong
+            ><span
+              >{{
+                order.offer === "membership"
+                  ? "Adhésion individuelle"
+                  : "Ticket cinéma"
+              }}
+              · {{ order.reference }}</span
+            >
+            @if (order.membership; as member) {
+              <span
+                >Valable du
+                {{ member.membershipStartDate | date: "dd/MM/yyyy" }} au
+                {{ member.membershipEndDate | date: "dd/MM/yyyy" }}</span
+              >
+            }
+          </div>
+        }
+        <div class="scan-actions">
+          <button
+            class="button full-width"
+            (click)="act('entry')"
+            [disabled]="
+              result.status !== 'valid-member' &&
+              result.status !== 'valid-ticket'
+            "
+          >
+            <app-icon name="Check" />
+            {{
+              result.status === "used"
+                ? "Entrée déjà enregistrée"
+                : "Valider l’entrée"
+            }}
+          </button>
+          <div class="popcorn-status">
+            <app-icon name="Popcorn" [size]="24" />
+            <div>
+              <strong>{{
+                result.popcornRedeemed
+                  ? "Popcorn déjà distribué"
+                  : result.popcornEligible
+                    ? "Un popcorn offert disponible"
+                    : "Aucun droit au popcorn"
+              }}</strong>
+              <p>
+                {{
+                  result.popcornEligible
+                    ? "Retrait suivi séparément de l’entrée."
+                    : "Réservé aux cartes valides, à la soirée cinéma des 72h."
+                }}
+              </p>
+            </div>
+          </div>
+          <button
+            class="button button-outline full-width"
+            (click)="act('popcorn')"
+            [disabled]="!result.popcornEligible || result.popcornRedeemed"
+          >
+            {{
+              result.popcornRedeemed
+                ? "Retrait déjà enregistré"
+                : "Valider le retrait du popcorn"
+            }}
+          </button>
+        </div>
+      } @else {
+        <div class="empty-state">
+          <app-icon name="QrCode" [size]="44" />
+          <h2>Prêt pour le prochain contrôle.</h2>
+          <p>Le résultat du contrôle apparaîtra ici.</p>
+        </div>
+      }
+      @if (error()) {
+        <p class="error-banner" role="alert">{{ error() }}</p>
+      }
+    </div>
+    <div class="demo-samples">
+      <p class="eyebrow">ESSAYER AVEC DES DONNÉES FICTIVES</p>
+      <div class="sample-buttons">
+        @for (example of samples; track example.id) {
+          <button class="chip" (click)="sample(example.id)">
+            {{ example.label }}
+          </button>
+        }
+      </div>
+      <p class="small muted">
+        Essayez une carte valide, une carte expirée ou un ticket pour la soirée
+        cinéma des 72h. Les états sont conservés sur cet appareil.
+      </p>
+    </div>
+  </div>
+  <div class="notice span-2">
+    <app-icon name="ShieldCheck" /><span
+      >Cette page est une démonstration accessible sans connexion. Les données
+      et validations locales sont modifiables et ne constituent pas un système
+      anti-fraude. Une mise en production nécessitera un backend, une base de
+      données et des rôles organisateurs.</span
+    >
+  </div>
+</section>

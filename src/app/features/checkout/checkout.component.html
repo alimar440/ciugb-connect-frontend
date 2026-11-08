@@ -1,0 +1,295 @@
+<section class="section-shell page-intro compact">
+  <p class="eyebrow">VOTRE PROCHAINE EXPÉRIENCE COMMENCE ICI</p>
+  <h1>On vous garde une place.</h1>
+  <p>
+    Aucun paiement réel. Vos achats de démonstration restent sur cet appareil.
+  </p>
+</section>
+<div class="section-shell checkout-shell">
+  <ol class="checkout-progress" aria-label="Progression de la réservation">
+    @for (label of steps; track label; let i = $index) {
+      <li
+        [class.current]="step() === i + 1"
+        [class.complete]="step() > i + 1"
+        [attr.aria-current]="step() === i + 1 ? 'step' : null"
+      >
+        <span>
+          @if (step() > i + 1) {
+            <app-icon name="Check" [size]="16" />
+          } @else {
+            {{ i + 1 }}
+          }</span
+        ><b>{{ label }}</b>
+      </li>
+    }
+  </ol>
+  @if (completed(); as order) {
+    <section class="confirmation">
+      <span class="success-icon"
+        ><app-icon name="CircleCheck" [size]="40"
+      /></span>
+      <p class="eyebrow">ACHAT DE DÉMONSTRATION ENREGISTRÉ</p>
+      <h2 id="checkout-heading" tabindex="-1">
+        C’est prêt, {{ order.member.firstName }} !
+      </h2>
+      <p>
+        Référence <strong>{{ order.reference }}</strong> · Paiement simulé,
+        aucun montant débité.
+      </p>
+      <app-credential [order]="order" /><a
+        class="button button-outline"
+        routerLink="/mes-billets"
+        >Retrouver mes billets et cartes <app-icon name="ArrowRight"
+      /></a>
+    </section>
+  } @else {
+    <div class="checkout-layout">
+      <section class="panel checkout-main">
+        @if (step() === 1) {
+          <p class="eyebrow">ÉTAPE 01</p>
+          <h2 id="checkout-heading" tabindex="-1">À chacun sa formule.</h2>
+          <fieldset class="offer-selector">
+            <legend class="sr-only">Choisissez une offre</legend>
+            <label [class.selected]="offer() === 'ticket'"
+              ><input
+                type="radio"
+                name="checkout-offer"
+                [checked]="offer() === 'ticket'"
+                (change)="choose('ticket')"
+              /><span
+                ><strong>Ticket cinéma</strong
+                ><small>Une place pour la soirée des 72h</small></span
+              ><b>500 FCFA</b></label
+            ><label [class.selected]="offer() === 'membership'"
+              ><input
+                type="radio"
+                name="checkout-offer"
+                [checked]="offer() === 'membership'"
+                (change)="choose('membership')"
+              /><span
+                ><strong>Carte membre annuelle</strong
+                ><small>Une année entière d’avantages</small></span
+              ><b>1 000 FCFA</b></label
+            >
+          </fieldset>
+          @if (offer() === "ticket") {
+            <div class="quantity-row">
+              <label for="quantity">Nombre de tickets</label
+              ><select
+                id="quantity"
+                [value]="quantity()"
+                (change)="quantity.set(+$any($event.target).value)"
+              >
+                @for (n of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; track n) {
+                  <option [value]="n">{{ n }}</option>
+                }
+              </select>
+            </div>
+            <p class="small muted">
+              Un QR code distinct par ticket. Popcorn non inclus.
+            </p>
+          } @else {
+            <p class="notice">
+              L’adhésion est individuelle. Pour plusieurs membres, effectuez une
+              commande par personne.
+            </p>
+          }
+        }
+        @if (step() === 2) {
+          <p class="eyebrow">ÉTAPE 02</p>
+          <h2 id="checkout-heading" tabindex="-1">Faisons connaissance.</h2>
+          <p class="muted small">
+            Les champs marqués d’un astérisque sont obligatoires.
+          </p>
+          <form
+            [formGroup]="form"
+            (ngSubmit)="next()"
+            id="details-form"
+            novalidate
+          >
+            <div class="form-grid">
+              <div>
+                <label for="firstName">Prénom *</label
+                ><input
+                  id="firstName"
+                  formControlName="firstName"
+                  autocomplete="given-name"
+                  maxlength="60"
+                  [attr.aria-invalid]="invalid('firstName')"
+                  aria-describedby="firstName-error"
+                />
+                @if (invalid("firstName")) {
+                  <small class="field-error" id="firstName-error"
+                    >Renseignez votre prénom.</small
+                  >
+                }
+              </div>
+              <div>
+                <label for="lastName">Nom *</label
+                ><input
+                  id="lastName"
+                  formControlName="lastName"
+                  autocomplete="family-name"
+                  maxlength="60"
+                  [attr.aria-invalid]="invalid('lastName')"
+                  aria-describedby="lastName-error"
+                />
+                @if (invalid("lastName")) {
+                  <small class="field-error" id="lastName-error"
+                    >Renseignez votre nom.</small
+                  >
+                }
+              </div>
+              <div class="span-2">
+                <label for="email">Adresse email *</label
+                ><input
+                  id="email"
+                  type="email"
+                  formControlName="email"
+                  autocomplete="email"
+                  maxlength="160"
+                  [attr.aria-invalid]="invalid('email')"
+                  aria-describedby="email-error"
+                />
+                @if (invalid("email")) {
+                  <small class="field-error" id="email-error"
+                    >Entrez une adresse email valide.</small
+                  >
+                }
+              </div>
+              <div class="span-2">
+                <label for="phone">Téléphone *</label
+                ><input
+                  id="phone"
+                  type="tel"
+                  formControlName="phone"
+                  autocomplete="tel"
+                  placeholder="+221 77 000 00 00"
+                  [attr.aria-invalid]="invalid('phone')"
+                  aria-describedby="phone-error"
+                />
+                @if (invalid("phone")) {
+                  <small class="field-error" id="phone-error"
+                    >Entrez un numéro de téléphone valide.</small
+                  >
+                }
+              </div>
+              <div class="span-2">
+                <label for="studentNumber"
+                  >Numéro étudiant
+                  <span class="muted">(facultatif)</span></label
+                ><input
+                  id="studentNumber"
+                  formControlName="studentNumber"
+                  maxlength="40"
+                />
+              </div>
+            </div>
+          </form>
+        }
+        @if (step() === 3) {
+          <p class="eyebrow">ÉTAPE 03</p>
+          <h2 id="checkout-heading" tabindex="-1">Tout est bon ?</h2>
+          <p>
+            {{ form.controls.firstName.value }} {{ form.controls.lastName.value
+            }}<br /><span class="muted">{{ form.controls.email.value }}</span>
+          </p>
+          <fieldset class="payment-methods">
+            <legend>Moyen de paiement à simuler</legend>
+            <label [class.selected]="method() === 'wave'"
+              ><input
+                type="radio"
+                name="method"
+                [checked]="method() === 'wave'"
+                (change)="method.set('wave')"
+              /><span class="payment-logo wave">W</span
+              ><strong>Wave</strong></label
+            ><label [class.selected]="method() === 'orange-money'"
+              ><input
+                type="radio"
+                name="method"
+                [checked]="method() === 'orange-money'"
+                (change)="method.set('orange-money')"
+              /><span class="payment-logo orange">OM</span
+              ><strong>Orange Money</strong></label
+            >
+          </fieldset>
+          <div class="notice">
+            <app-icon name="ShieldCheck" /><span
+              >Ce bouton simule un paiement réussi. Aucun débit, aucun
+              transfert. Ne saisissez jamais de PIN, d’OTP ou de données
+              bancaires sur cette démonstration.</span
+            >
+          </div>
+        }
+        @if (error()) {
+          <p role="alert" class="error-banner">{{ error() }}</p>
+        }
+        <div class="checkout-actions">
+          @if (step() > 1) {
+            <button
+              class="button button-ghost"
+              (click)="back()"
+              [disabled]="busy()"
+            >
+              Retour
+            </button>
+          }
+          @if (step() < 3) {
+            <button
+              class="button"
+              [attr.type]="step() === 2 ? 'submit' : 'button'"
+              [attr.form]="step() === 2 ? 'details-form' : null"
+              (click)="continueFromButton()"
+            >
+              Continuer <app-icon name="ArrowRight" />
+            </button>
+          } @else {
+            <button class="button" (click)="pay()" [disabled]="busy()">
+              {{
+                busy()
+                  ? "Simulation en cours…"
+                  : "Simuler le paiement — " + total() + " FCFA"
+              }}
+              @if (!busy()) {
+                <app-icon name="ArrowRight" />
+              }
+            </button>
+          }
+        </div>
+      </section>
+      <aside class="panel order-summary">
+        <p class="eyebrow">VOTRE RÉCAPITULATIF</p>
+        <h3>
+          {{
+            offer() === "membership"
+              ? "Carte membre annuelle"
+              : "Soirée cinéma des 72h"
+          }}
+        </h3>
+        @if (offer() === "membership") {
+          <p class="value-line">1 000 FCFA. Une année entière d'avantages.</p>
+          <app-benefits />
+          <p class="small muted">
+            Année de démo 2026–2027. Active à partir de l’adhésion (au plus tôt
+            le 1er octobre 2026), jusqu’au 31 juillet 2027. Calendrier à
+            confirmer. Validité contrôlée à chaque événement ; aucun accès
+            gratuit après expiration.
+          </p>
+        } @else {
+          <ul class="benefits">
+            <li>
+              <app-icon name="Check" />{{ quantity() }} ticket(s) individuel(s)
+            </li>
+            <li><app-icon name="Check" />QR code par participant</li>
+            <li><app-icon name="CalendarDays" />Date et salle à confirmer</li>
+          </ul>
+        }
+        <div class="total-row">
+          <span>Total simulé</span><strong>{{ total() }} FCFA</strong>
+        </div>
+        <p class="small muted">Paiement unique · Aucun frais supplémentaire</p>
+      </aside>
+    </div>
+  }
+</div>
