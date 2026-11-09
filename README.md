@@ -1,104 +1,112 @@
-# CIUGB Connect
+# CIUGB Connect · Soirée thriller des 72h
 
-Frontend Angular 19 standalone pour les 72h du Club Informatique de l’Université Gaston Berger. Interface française, responsive, noire et rouge, avec Tailwind CSS 3, SCSS, Lucide, Signals, formulaires réactifs et routes chargées à la demande.
+Billetterie du Club Informatique de l’Université Gaston Berger. Angular 19 standalone, TypeScript strict, Tailwind/SCSS, thèmes clair et sombre, logos originaux du club, QR caméra/image/code et exports PDF/PNG/SVG.
 
-## Démarrer
+## Parcours actuel
+
+1. Le participant indique uniquement **son nom complet, son téléphone et le nombre de places**.
+2. Sa réservation est enregistrée avec le statut `pending_payment`. Aucun billet, QR ou téléchargement n’est créé.
+3. L’organisateur se connecte à `/admin`, contacte le participant par téléphone ou WhatsApp, puis marque le contact s’il le souhaite.
+4. Après réception du paiement hors ligne, il clique sur « Confirmer le paiement », puis confirme explicitement que le club a reçu le montant.
+5. L’API crée un billet individuel par place et passe la réservation à `validated`.
+6. Le participant consulte `/mes-billets`, actualise son statut ou utilise son code de réservation pour retrouver son dossier depuis un autre appareil. Il peut télécharger chaque billet en PDF, PNG haute résolution (2080 × 1300) ou SVG.
+7. `/scan`, réservé à l’organisateur, accepte le code du billet, une image QR ou la caméra. Chaque billet autorise une entrée unique.
+
+**Plus de carte membre, plus de paiement par API, plus d’email ni de numéro étudiant.** Le tarif reste à **500 FCFA par place**. Le film, la date, l’horaire et la salle restent à confirmer. Le popcorn n’est pas inclus.
+
+Le code `R-…` est un code privé de consultation de réservation ; il ne sert pas de billet. Le code `B-…` et le QR sont créés uniquement après validation du paiement. La référence privée de réservation et le téléphone ne sont pas imprimés dans le billet ni encodés dans le QR.
+
+## Démonstration locale
 
 ```powershell
-cd ciugb-connect
-npm.cmd install --cache .angular/cache/npm
+npm.cmd ci --cache .angular/cache/npm
 npm.cmd start
 ```
 
-Ouvrir http://localhost:4200. `npm.cmd` permet de lancer npm sous PowerShell sans modifier la politique d’exécution des scripts.
+Ouvrir http://localhost:4200. Sans API, **uniquement sur localhost**, une démonstration locale est activée et clairement signalée. Ses données sont conservées sous `ciugb-reservations-demo-v2`. Les codes des réservations consultées sont mémorisés sous `ciugb-reservation-references-v2`.
 
-## Pages
+Dans `/admin`, trois exemples fictifs permettent de tester une réservation en attente, un billet payé et un billet déjà utilisé. Le bouton « Confirmer le paiement » débloque réellement le justificatif dans cette démonstration, mais ne représente aucun encaissement réel.
 
-Le bouton soleil / lune dans l’en-tête permet de choisir le mode clair ou sombre sur ordinateur et mobile. Le choix est mémorisé sous `ciugb-theme`. Sans choix enregistré, la préférence système est utilisée au premier chargement. Les logos de l’en-tête et du pied de page suivent le thème ; la carte membre et les documents téléchargés gardent leur identité noire et rouge.
+**Sur Vercel, une API ou une base absente ne déclenche jamais une fausse réservation locale.** Le site indique que les réservations ne sont pas encore ouvertes.
 
-| Route | Fonction |
-| --- | --- |
-| `/` | Accueil, présentation des deux offres et des 72h |
-| `/cinema` | Informations pratiques et sélection de la formule / quantité |
-| `/adhesion` | Avantages, validité annuelle et aperçu de carte |
-| `/commander?offre=membership` | Adhésion individuelle à 1 000 FCFA |
-| `/commander?offre=ticket&quantite=3` | Tickets à 500 FCFA chacun, un QR par ticket |
-| `/mes-billets` | Achats de ce navigateur, QR et téléchargements PDF, PNG ou SVG |
-| `/scan` | Contrôle des 72h par saisie de code, caméra ou image QR |
-| `/admin` | Chiffres simulés, filtres et configuration de la soirée cinéma des 72h |
+## Activer la base réelle sur Vercel
 
-## Règles de la carte annuelle
+Le backend est livré dans le même projet : `api/handler.ts` délègue à `server/handler.ts`. Il utilise PostgreSQL et ne nécessite aucun serveur à administrer séparément. Aucun compte ni base externe n’a été créé automatiquement.
 
-« 1 000 FCFA. Une année entière d'avantages. »
+1. Créer une base PostgreSQL dédiée auprès du fournisseur choisi (par exemple Neon via Vercel, ou PostgreSQL de Supabase). Préférer l’URL de connexion poolée du fournisseur et conserver ses paramètres TLS.
+2. Exécuter **[database/schema.sql](database/schema.sql)** dans l’éditeur SQL de cette base. Les tables portent le préfixe `ciugb_`. Le tarif et la capacité se configurent dans `ciugb_event` (valeurs initiales : 500 FCFA, 120 places).
+3. Dans **Vercel → Project Settings → Environment Variables**, définir pour Production et Preview si nécessaire :
 
-- Adhésion individuelle, avec un identifiant QR personnel opaque (UUID).
-- Entrée gratuite à tous les événements du club pendant la validité de la carte, y compris la soirée cinéma des 72h.
-- Un popcorn offert uniquement à cette soirée. Le retrait est indépendant de l’entrée : il peut être enregistré avant ou après celle-ci, une seule fois.
-- Champs TypeScript : `membershipStartDate`, `membershipEndDate`, `membershipStatus`.
-- La date de l’événement détermine les droits. Les bornes de validité sont incluses ; les cartes expirées, suspendues ou pas encore actives sont refusées.
-- Une carte ne peut enregistrer qu’une entrée par événement, mais reste utilisable aux autres événements pendant sa validité.
-- Un ticket ne donne accès qu’à son événement, une seule fois, sans popcorn inclus.
+| Variable serveur       | Valeur attendue                                                     |
+| ---------------------- | ------------------------------------------------------------------- |
+| `DATABASE_URL`         | URL PostgreSQL privée fournie par l’hébergeur                       |
+| `ADMIN_PASSWORD`       | Mot de passe organisateur d’au moins 12 caractères                  |
+| `ADMIN_SESSION_SECRET` | Secret aléatoire d’au moins 32 caractères, distinct du mot de passe |
 
-L’année universitaire **2026–2027**, du **1er octobre 2026 au 31 juillet 2027**, est une hypothèse de démonstration. Une adhésion en cours d’année commence le jour de l’achat et finit à la clôture de cette année ; elle ne glisse pas sur douze mois. La campagne est fermée après cette clôture.
+4. Régler la **Root Directory** Vercel sur le dossier contenant `package.json`, `vercel.json` et `api/`. Si le dépôt contient le dossier parent CIUGB, ce sera `ciugb-connect`. Si le dépôt contient directement l’application, laisser la racine.
+5. Utiliser Node.js 22, la commande de build `npm run build` et le dossier de sortie `dist/client`. `vercel.json` déclare ces paramètres et les routes API/SPA.
+6. Pousser vers le **bon dépôt GitHub déjà relié à Vercel**, puis redéployer. Les modifications locales ne mettent pas automatiquement à jour le site déployé.
+7. Vérifier `/api/config` : `configured` doit être `true`. Ouvrir `/admin` et se connecter avec le mot de passe défini côté serveur.
 
-La date officielle de la soirée cinéma, l’horaire, la salle, la programmation, les réseaux sociaux et les éléments de marque officiels restent à confirmer. L’illustration cinéma et la signature typographique sont des créations de présentation, sans affiche de film tierce.
+Les secrets ne doivent jamais être placés dans `src/`, dans une variable publique Angular ou dans Git. `.env.example` donne les noms sans secret. `.env` et `.env.*` sont ignorés par Git.
 
-## Tester les scénarios
+Pour appliquer le schéma depuis votre machine, créer un fichier **local et ignoré** `.env.local` contenant les variables privées, puis :
 
-Dans `/scan`, le contrôle est dédié à la soirée cinéma des 72h. Utiliser les boutons d’exemple :
+```powershell
+node --env-file=.env.local scripts/migrate-db.mjs
+```
 
-| Identifiant | Scénario initial |
-| --- | --- |
-| `demo-member` | Carte valide pendant l’année 2026–2027 |
-| `demo-expired` | Carte de l’année précédente, expirée |
-| `demo-ticket` | Ticket cinéma disponible |
-| `demo-used` | Ticket cinéma déjà utilisé |
-| `demo-unknown` | Identifiant inconnu |
+## Développement avec l’API réelle
 
-La soirée cinéma utilise le **12 décembre 2026** comme date de contrôle fictive, jamais comme calendrier officiel. L’admin n’affiche que les achats et validations rattachés aux 72h, ainsi que les adhésions vendues sur cette plateforme.
+Après configuration de `.env.local` et du schéma, dans un terminal :
 
-Deux modes de consultation sont disponibles :
+```powershell
+node --env-file=.env.local --import tsx server/dev.ts
+```
 
-- **Saisir un code** : code `T-…` affiché sur chaque ticket, numéro de membre `CI-…`, ou identifiant complet contenu dans le QR. La saisie est insensible à la casse. Une référence de commande collective ne permet pas de valider plusieurs participants d’un coup.
-- **Scanner un QR code** : activer la caméra (autorisation demandée au clic) ou sélectionner une image PNG, JPEG, WebP ou SVG. La lecture est locale avec jsQR ; aucune image n’est envoyée à un serveur. La caméra s’arrête après reconnaissance, fermeture du lecteur, changement de page ou passage en arrière-plan. HTTPS ou localhost est nécessaire pour la caméra ; la saisie manuelle et l’import d’image restent disponibles en cas de refus.
+Dans un second terminal :
 
-La consultation affiche le résultat ; l’organisateur valide ensuite explicitement l’entrée ou le popcorn. Les deux modes utilisent le même identifiant et les mêmes protections contre les doubles validations.
+```powershell
+npm.cmd run dev:connected
+```
 
-Les retraits, entrées, achats et changements de capacité / date de simulation sont enregistrés dans LocalStorage sous `ciugb-connect-demo-v1`. Les quatre commandes d’exemple apparaissent dans l’admin, pas dans « Mes billets ». Pour réinitialiser la démo, supprimer uniquement cette clé dans les outils du navigateur, puis recharger.
+Le proxy Angular transmet `/api` vers le serveur local 127.0.0.1:3001. `server/dev.ts` est réservé au développement ; Vercel exécute `api/handler.ts`.
+
+## API
+
+| Route                                | Fonction                                                          |
+| ------------------------------------ | ----------------------------------------------------------------- |
+| `GET /api/config`                    | Ouverture des réservations, tarif, capacité et places restantes   |
+| `POST /api/reservations`             | Enregistrement avec clé d’idempotence, nom, téléphone et quantité |
+| `POST /api/reservation`              | Consultation par code privé, billets masqués avant validation     |
+| `GET/POST/DELETE /api/admin-session` | État de connexion, connexion et déconnexion organisateur          |
+| `GET /api/admin-reservations`        | Dossiers organisateur, après authentification                     |
+| `POST /api/admin-reservation`        | Contact, confirmation manuelle du paiement ou annulation          |
+| `POST /api/admin-scan`               | Vérification et validation atomique d’une entrée                  |
+
+Le cookie organisateur est signé, HttpOnly, SameSite=Strict et Secure en production. Les écritures vérifient l’origine, les requêtes sont paramétrées, les tentatives de connexion/réservation/consultation sont limitées et les décisions de validation sont prises côté serveur. Le mot de passe et l’URL SQL ne sont pas envoyés au navigateur. Aucun SMS, appel ou message WhatsApp n’est envoyé automatiquement : les liens ouvrent les outils de l’organisateur.
+
+Les places en attente occupent la capacité jusqu’à confirmation ou annulation ; il n’y a pas d’expiration automatique. Le club doit annuler les demandes abandonnées. Une confirmation répétée ne crée pas de doublons. Un billet déjà utilisé ne peut pas être annulé. Les annulations retirent les billets concernés. Le téléchargement recharge le statut côté serveur avant chaque export.
+
+Une suppression ou une modification du dossier via les outils d’administration de la base reste une opération distincte, non implémentée dans cette interface. Définir avec le club une durée de conservation des coordonnées avant ouverture au public.
 
 ## Vérification
 
 ```powershell
 npm.cmd run build
+npm.cmd run typecheck:api
 $env:CHROME_BIN = 'C:\Program Files\Google\Chrome\Application\chrome.exe'
 npm.cmd test -- --watch=false --browsers=ChromeHeadless
 ```
 
-Pour les tests de parcours, démarrer l’application sur `http://127.0.0.1:4200`, puis, dans un second terminal :
+Tests de parcours sur ordinateur et mobile (serveur Angular démarré sur 127.0.0.1:4200 en mode démo) :
 
 ```powershell
 npm.cmd run test:e2e -- --workers=2
 ```
 
-Playwright utilise Chrome installé localement, avec des profils ordinateur et mobile. Les captures sont écrites dans `artifacts/`, les traces d’échec dans `test-results/` (dossiers ignorés par Git). L’émulation mobile ne remplace pas une validation sur téléphone réel.
+Tests d’intégration API : définir `TEST_DATABASE_URL` vers une **base de test dédiée dont le nom se termine par `_test`**, puis lancer `npm.cmd run test:api`. Les tables de test sont vidées entre les scénarios. Ne jamais utiliser une base de production. Sans cette variable, la suite d’intégration est explicitement ignorée.
 
-Les tests couvrent notamment les bornes de validité, l’expiration à un autre événement, les doubles validations, l’indépendance du popcorn, les quantités, les identifiants uniques, la persistance, les erreurs de stockage, les formulaires et le téléchargement.
+Les tests vérifient le verrouillage avant paiement, la confirmation manuelle, la consultation sur un autre navigateur, la génération individuelle des billets, l’accès organisateur, les annulations, les capacités et les doubles scans concurrents. La caméra reste à vérifier sur téléphone physique ; sa lecture et l’import d’images sont testables localement sous HTTPS/localhost.
 
-## Architecture et passage à une API
-
-- `models/domain.ts` : Event, Ticket, Member, Membership, Order, Payment, CheckIn et PopcornRedemption.
-- `core/catalog.ts` : année universitaire, prix, avantages et événements de démonstration.
-- `core/membership-rules.ts` : fonctions de décision sans dépendance à Angular ni au stockage.
-- `core/demo-data.ts` : exemples cohérents de départ.
-- `services/club-store.service.ts` : façade Signals ; seule porte d’écriture pour les achats, entrées et retraits. Remplacer ses opérations de stockage par une API pour connecter le frontend.
-- `services/download.service.ts` : export PDF (page paysage 104 × 65 mm), PNG haute résolution (2080 × 1300) ou SVG vectoriel. Tous utilisent la même composition, le logo embarqué et le QR personnel. La bibliothèque PDF est chargée uniquement lors d’un export PDF. Aucun document n’est envoyé à un serveur.
-- `shared/` : icônes sélectionnées, avantages, QR, carte et affichage des justificatifs.
-- `features/` : pages standalone chargées en lazy loading.
-
-Les endpoints futurs devront gérer les paiements réels, l’identité des organisateurs, les rôles et les opérations atomiques de contrôle. Les règles d’autorisation doivent alors être exécutées côté serveur.
-
-## Limites explicites
-
-Aucun backend, aucun débit Wave / Orange Money, aucun email envoyé. Les QR sont réellement générés et lus par caméra ou image, mais les droits d’accès sont simulés localement : aucun QR n’est signé ou validé par un serveur. Le stockage est propre à ce navigateur, modifiable et non synchronisé. `/admin` et `/scan` sont volontairement accessibles sans authentification et signalés comme démonstrations. La caméra a été testée avec un flux vidéo synthétique dans Chrome ; son fonctionnement sur un téléphone réel reste à confirmer.
-
-Références d’intégration : [Tailwind CSS 3 avec Angular](https://v3.tailwindcss.com/docs/guides/angular), [Lucide Angular](https://v0.lucide.dev/guide/packages/lucide-angular), [jsQR](https://github.com/cozmo/jsQR), [accès caméra](https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia). Les versions Angular existantes ont été conservées.
+Références : [Vercel Functions](https://vercel.com/docs/functions/runtimes/node-js), [configuration Vercel](https://vercel.com/docs/project-configuration/vercel-json), [Postgres.js](https://github.com/porsager/postgres).

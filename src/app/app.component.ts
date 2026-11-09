@@ -23,4 +23,7 @@ export class AppComponent {
   readonly theme = inject(ThemeService);
   readonly menuOpen = signal(false);
   readonly year = new Date().getFullYear();
+  constructor() {
+    void this.store.initialize();
+  }
 }

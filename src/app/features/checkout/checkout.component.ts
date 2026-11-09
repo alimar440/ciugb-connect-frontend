@@ -1,151 +1,94 @@
 import { Component, inject, signal, computed } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IconComponent } from '../../shared/icon.component';
-import { BenefitsComponent } from '../../shared/benefits.component';
-import { Order, Offer, Payment } from '../../models/domain';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ClubStore } from '../../services/club-store.service';
-import { CredentialComponent } from '../../shared/credential.component';
-
+import { Reservation } from '../../models/domain';
+import { IconComponent } from '../../shared/icon.component';
 @Component({
   selector: 'app-checkout',
-  imports: [
-    ReactiveFormsModule,
-    RouterLink,
-    IconComponent,
-    BenefitsComponent,
-    CredentialComponent,
-  ],
+  imports: [ReactiveFormsModule, RouterLink, IconComponent],
   templateUrl: './checkout.component.html',
 })
 export class CheckoutComponent {
   readonly store = inject(ClubStore);
-  private readonly route = inject(ActivatedRoute);
   private readonly fb = inject(FormBuilder);
-  readonly step = signal(1);
-  readonly offer = signal<Offer>(
-    this.route.snapshot.queryParamMap.get('offre') === 'membership'
-      ? 'membership'
-      : 'ticket',
-  );
-  readonly quantity = signal(this.initialQuantity());
-  readonly method = signal<Payment['method']>('wave');
+  private readonly route = inject(ActivatedRoute);
   readonly busy = signal(false);
   readonly error = signal('');
-  readonly completed = signal<Order | null>(null);
-  readonly total = computed(() =>
-    this.offer() === 'membership' ? 1000 : 500 * this.quantity(),
-  );
-  readonly steps = [
-    'Votre formule',
-    'Vos informations',
-    'Paiement simulé',
-    'Votre QR code',
-  ];
+  readonly completed = signal<Reservation | null>(null);
+  private readonly requestId = crypto.randomUUID();
   readonly form = this.fb.nonNullable.group({
-    firstName: [
+    fullName: [
       '',
       [
         Validators.required,
-        Validators.pattern(/.*\S.*/),
-        Validators.maxLength(60),
+        Validators.pattern(/.*\S.*\S.*/),
+        Validators.maxLength(120),
       ],
-    ],
-    lastName: [
-      '',
-      [
-        Validators.required,
-        Validators.pattern(/.*\S.*/),
-        Validators.maxLength(60),
-      ],
-    ],
-    email: [
-      '',
-      [Validators.required, Validators.email, Validators.maxLength(160)],
     ],
     phone: [
       '',
-      [Validators.required, Validators.pattern(/^[+\d\s()-]{8,20}$/)],
+      [Validators.required, Validators.pattern(/^[+\d\s()-]{8,22}$/)],
     ],
-    studentNumber: ['', Validators.maxLength(40)],
+    quantity: [
+      this.initialQuantity(),
+      [Validators.required, Validators.min(1), Validators.max(10)],
+    ],
   });
+  readonly quantity = signal(this.initialQuantity());
+  readonly total = computed(
+    () => this.quantity() * this.store.event().ticketPrice,
+  );
   private initialQuantity(): number {
-    if (this.offer() === 'membership') return 1;
-    const quantity = Number(
-      this.route.snapshot.queryParamMap.get('quantite') ?? 1,
+    const n = Number(this.route.snapshot.queryParamMap.get('quantite') ?? 1);
+    return Number.isInteger(n) && n >= 1 && n <= 10 ? n : 1;
+  }
+  constructor() {
+    this.form.controls.quantity.valueChanges.subscribe((n) =>
+      this.quantity.set(Number(n)),
     );
-    return Number.isInteger(quantity) && quantity >= 1 && quantity <= 10
-      ? quantity
-      : 1;
   }
-  choose(offer: Offer): void {
-    this.offer.set(offer);
-    if (offer === 'membership') this.quantity.set(1);
-    this.error.set('');
+  invalid(field: 'fullName' | 'phone'): boolean {
+    return (
+      this.form.controls[field].touched && this.form.controls[field].invalid
+    );
   }
-  continueFromButton(): void {
-    if (this.step() !== 2) this.next();
-  }
-  next(): void {
-    this.error.set('');
-    if (this.step() === 2 && this.form.invalid) {
-      this.form.markAllAsTouched();
-      this.error.set('Complétez les champs indiqués pour continuer.');
-      return;
-    }
-    if (this.offer() === 'ticket' && this.quantity() > this.store.remaining()) {
-      this.error.set('Le nombre de places demandé n’est plus disponible.');
-      return;
-    }
-    this.step.update((step) => Math.min(3, step + 1));
-    this.focusHeading();
-  }
-  back(): void {
-    this.step.update((step) => Math.max(1, step - 1));
-    this.focusHeading();
-  }
-  invalid(field: keyof typeof this.form.controls): boolean {
-    const control = this.form.controls[field];
-    return control.touched && control.invalid;
-  }
-  async pay(): Promise<void> {
+  async submit(): Promise<void> {
     if (this.busy() || this.completed()) return;
     if (this.form.invalid) {
-      this.step.set(2);
       this.form.markAllAsTouched();
+      this.error.set('Vérifiez votre nom complet et votre téléphone.');
       return;
     }
     this.busy.set(true);
     this.error.set('');
     try {
-      await new Promise((resolve) => setTimeout(resolve, 650));
       const values = this.form.getRawValue();
-      const member = Object.fromEntries(
-        Object.entries(values).map(([key, value]) => [key, value.trim()]),
-      ) as typeof values;
-      const order = this.store.purchase(
-        this.offer(),
-        this.quantity(),
-        member,
-        this.method(),
-      );
-      this.completed.set(order);
-      this.step.set(4);
-      this.focusHeading();
-      this.store.notify(
-        'Achat simulé enregistré sur cet appareil. Aucun débit effectué.',
-      );
+      const reservation = await this.store.reserve({
+        ...values,
+        quantity: Number(values.quantity),
+        requestId: this.requestId,
+      });
+      this.completed.set(reservation);
+      setTimeout(() => document.getElementById('reservation-success')?.focus());
     } catch (error) {
       this.error.set(
         error instanceof Error
           ? error.message
-          : 'La simulation a échoué. Réessayez.',
+          : 'Réservation impossible. Réessayez.',
       );
     } finally {
       this.busy.set(false);
     }
   }
-  private focusHeading(): void {
-    setTimeout(() => document.getElementById('checkout-heading')?.focus());
+  async copyCode(): Promise<void> {
+    try {
+      await navigator.clipboard.writeText(this.completed()!.reference);
+      this.store.notify(
+        'Code de réservation copié. Conservez-le pour retrouver votre billet.',
+      );
+    } catch {
+      this.store.notify('Sélectionnez le code affiché pour le copier.');
+    }
   }
 }

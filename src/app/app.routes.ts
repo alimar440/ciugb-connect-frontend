@@ -15,11 +15,8 @@ export const routes: Routes = [
   },
   {
     path: 'adhesion',
-    title: 'Carte membre annuelle · CIUGB Connect',
-    loadComponent: () =>
-      import('./features/membership/membership.component').then(
-        (m) => m.MembershipComponent,
-      ),
+    redirectTo: 'commander',
+    pathMatch: 'full',
   },
   {
     path: 'commander',
@@ -31,7 +28,7 @@ export const routes: Routes = [
   },
   {
     path: 'mes-billets',
-    title: 'Mes billets et cartes · CIUGB Connect',
+    title: 'Mes billets · CIUGB Connect',
     loadComponent: () =>
       import('./features/tickets/tickets.component').then(
         (m) => m.TicketsComponent,
@@ -39,7 +36,7 @@ export const routes: Routes = [
   },
   {
     path: 'scan',
-    title: 'Contrôle des accès · Démonstration',
+    title: 'Contrôle des billets · CIUGB Connect',
     loadComponent: () =>
       import('./features/scanner/scanner.component').then(
         (m) => m.ScannerComponent,
@@ -47,7 +44,7 @@ export const routes: Routes = [
   },
   {
     path: 'admin',
-    title: 'Organisateur · Démonstration',
+    title: 'Organisateur · CIUGB Connect',
     loadComponent: () =>
       import('./features/admin/admin.component').then((m) => m.AdminComponent),
   },

@@ -1,262 +1,375 @@
 import { Injectable, computed, signal } from '@angular/core';
 import {
-  Event,
-  Member,
-  Offer,
-  Order,
-  Payment,
-  StoreData,
+  AccessResult,
+  EventConfig,
+  Reservation,
+  ReservationInput,
+  Ticket,
 } from '../models/domain';
-import { ACADEMIC_YEAR, EVENTS, MEMBERSHIP_PRICE } from '../core/catalog';
-import { createDemoData } from '../core/demo-data';
-import { verifyAccess } from '../core/membership-rules';
-import { ticketAccessCode } from '../core/access-code';
+import { CINEMA } from '../core/catalog';
+import { createDemoReservations } from '../core/demo-data';
+import { inspectAccess, validateReservation } from '../core/reservation-rules';
 
-const STORAGE_KEY = 'ciugb-connect-demo-v1';
+const DEMO_KEY = 'ciugb-reservations-demo-v2';
+const REFERENCES_KEY = 'ciugb-reservation-references-v2';
 @Injectable({ providedIn: 'root' })
 export class ClubStore {
-  private readonly state = signal<StoreData>(this.load());
-  readonly data = this.state.asReadonly();
-  readonly orders = computed(() => this.state().orders);
-  readonly events = computed(() => this.state().events);
-  readonly myOrders = computed(() => this.orders().filter((o) => !o.demo));
+  readonly mode = signal<'loading' | 'demo' | 'live' | 'unavailable'>(
+    'loading',
+  );
+  readonly event = signal<EventConfig>({ ...CINEMA });
+  readonly admin = signal(false);
+  readonly orders = signal<Reservation[]>([]);
+  readonly myOrders = signal<Reservation[]>([]);
   readonly toast = signal('');
+  readonly startupError = signal('');
+  private refs = this.readReferences();
+  private initialization?: Promise<void>;
   private toastTimer?: ReturnType<typeof setTimeout>;
-
-  private load(): StoreData {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const value: StoreData = JSON.parse(raw);
-        if (
-          value.version === 1 &&
-          Array.isArray(value.events) &&
-          value.events.length === 3 &&
-          value.events.every(
-            (e) =>
-              e.id &&
-              Number.isInteger(e.capacity) &&
-              e.capacity > 0 &&
-              /^\d{4}-\d{2}-\d{2}$/.test(e.simulationDate),
-          ) &&
-          Array.isArray(value.orders) &&
-          Array.isArray(value.checkIns) &&
-          Array.isArray(value.popcornRedemptions) &&
-          value.orders.every(
-            (o) =>
-              o.id &&
-              o.member?.firstName &&
-              Array.isArray(o.tickets) &&
-              o.payment?.status === 'simulated',
-          )
+  private readonly demoRequests = new Map<string, string>();
+  readonly remaining = computed(() =>
+    this.mode() === 'demo'
+      ? Math.max(
+          0,
+          this.event().capacity -
+            this.orders()
+              .filter((r) => r.status !== 'cancelled')
+              .reduce((n, r) => n + r.quantity, 0),
         )
-          return value;
-      }
-    } catch {
-      /* Les données inutilisables sont remplacées par la démo. */
-    }
-    return createDemoData();
-  }
+      : this.event().remaining,
+  );
 
-  private save(next: StoreData): void {
+  initialize(): Promise<void> {
+    return (this.initialization ??= this.start());
+  }
+  private async start(): Promise<void> {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      const config = await this.request<{
+        configured: boolean;
+        event: EventConfig;
+      }>('/api/config');
+      this.event.set(config.event);
+      if (!config.configured)
+        throw new Error(
+          'Les réservations ne sont pas encore ouvertes. Réessayez plus tard ou contactez le club.',
+        );
+      this.mode.set('live');
+      const session = await this.request<{ authenticated: boolean }>(
+        '/api/admin-session',
+      );
+      this.admin.set(session.authenticated);
+      await this.refreshMine();
+    } catch (error) {
+      if (['localhost', '127.0.0.1', '[::1]'].includes(location.hostname)) {
+        this.mode.set('demo');
+        this.admin.set(true);
+        try {
+          const stored = JSON.parse(localStorage.getItem(DEMO_KEY) ?? 'null');
+          this.orders.set(
+            this.validDemo(stored) ? stored : createDemoReservations(),
+          );
+        } catch {
+          this.orders.set(createDemoReservations());
+        }
+        await this.refreshMine();
+      } else {
+        this.mode.set('unavailable');
+        this.startupError.set(
+          error instanceof Error
+            ? error.message
+            : 'Service momentanément indisponible.',
+        );
+      }
+    }
+  }
+  private validDemo(value: unknown): value is Reservation[] {
+    return (
+      Array.isArray(value) &&
+      value.every(
+        (r) =>
+          r &&
+          typeof r.reference === 'string' &&
+          typeof r.fullName === 'string' &&
+          Array.isArray(r.tickets) &&
+          ['pending_payment', 'validated', 'cancelled'].includes(r.status),
+      )
+    );
+  }
+  private readReferences(): string[] {
+    try {
+      const value: unknown = JSON.parse(
+        localStorage.getItem(REFERENCES_KEY) ?? '[]',
+      );
+      return Array.isArray(value)
+        ? value.filter((r): r is string => typeof r === 'string').slice(0, 100)
+        : [];
     } catch {
-      throw new Error(
-        'Le stockage local est indisponible ou plein. Autorisez-le pour conserver votre achat simulé.',
+      return [];
+    }
+  }
+  private remember(reference: string): void {
+    this.refs = [...new Set([reference, ...this.refs])].slice(0, 100);
+    try {
+      localStorage.setItem(REFERENCES_KEY, JSON.stringify(this.refs));
+    } catch {
+      this.notify(
+        'Conservez votre code de réservation : ce navigateur ne peut pas le mémoriser.',
       );
     }
-    this.state.set(next);
   }
-
+  private saveDemo(orders: Reservation[]): void {
+    try {
+      localStorage.setItem(DEMO_KEY, JSON.stringify(orders));
+    } catch {
+      throw new Error(
+        'Stockage local indisponible. La démonstration ne peut pas enregistrer cette modification.',
+      );
+    }
+    this.orders.set(orders);
+  }
+  private syncDemo(): void {
+    try {
+      const value: unknown = JSON.parse(
+        localStorage.getItem(DEMO_KEY) ?? 'null',
+      );
+      if (this.validDemo(value)) this.orders.set(value);
+    } catch {
+      /* Garder le dernier état valide. */
+    }
+  }
+  private async request<T>(
+    url: string,
+    body?: unknown,
+    method = body === undefined ? 'GET' : 'POST',
+  ): Promise<T> {
+    const response = await fetch(url, {
+      method,
+      credentials: 'same-origin',
+      cache: 'no-store',
+      headers: body === undefined ? {} : { 'Content-Type': 'application/json' },
+      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+    });
+    const type = response.headers.get('content-type') ?? '';
+    if (!type.includes('application/json'))
+      throw new Error('Service de réservation momentanément indisponible.');
+    const value = await response.json();
+    if (!response.ok) {
+      if (response.status === 401) this.admin.set(false);
+      throw new Error(
+        typeof value.error === 'string'
+          ? value.error
+          : 'La demande a échoué. Réessayez.',
+      );
+    }
+    return value as T;
+  }
   notify(message: string): void {
     clearTimeout(this.toastTimer);
     this.toast.set(message);
     this.toastTimer = setTimeout(() => this.toast.set(''), 6000);
   }
 
-  remaining(eventId = EVENTS[0].id): number {
-    const event = this.events().find((e) => e.id === eventId)!;
-    const sold = this.orders().reduce(
-      (n, o) => n + o.tickets.filter((t) => t.eventId === eventId).length,
-      0,
-    );
-    return Math.max(0, event.capacity - sold);
-  }
-
-  purchase(
-    offer: Offer,
-    quantity: number,
-    member: Member,
-    method: Payment['method'],
-  ): Order {
-    if (
-      !Number.isInteger(quantity) ||
-      quantity < 1 ||
-      quantity > 10 ||
-      (offer === 'membership' && quantity !== 1)
-    )
-      throw new Error(
-        'Choisissez de 1 à 10 tickets, ou une seule adhésion individuelle.',
-      );
-    if (
-      !member.firstName.trim() ||
-      !member.lastName.trim() ||
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(member.email) ||
-      !/^[+\d\s()-]{8,20}$/.test(member.phone)
-    )
-      throw new Error('Vérifiez vos coordonnées avant de continuer.');
-    if (offer === 'ticket' && quantity > this.remaining())
-      throw new Error(
-        'Il ne reste pas assez de places pour cette réservation.',
-      );
-    const day = new Date().toISOString().slice(0, 10);
-    if (offer === 'membership' && day > ACADEMIC_YEAR.end)
-      throw new Error('La campagne d’adhésion de cette année est terminée.');
-    const id = crypto.randomUUID();
-    const order: Order = {
-      id,
-      reference: `CI-${id.slice(0, 8).toUpperCase()}`,
-      createdAt: new Date().toISOString(),
-      offer,
-      member,
-      tickets:
-        offer === 'ticket'
-          ? Array.from({ length: quantity }, () => ({
-              id: crypto.randomUUID(),
-              eventId: EVENTS[0].id,
-            }))
-          : [],
-      membership:
-        offer === 'membership'
-          ? {
-              id: crypto.randomUUID(),
-              memberNumber: `CI-${ACADEMIC_YEAR.label.slice(0, 4)}-${id.slice(0, 6).toUpperCase()}`,
-              membershipStartDate:
-                day > ACADEMIC_YEAR.start ? day : ACADEMIC_YEAR.start,
-              membershipEndDate: ACADEMIC_YEAR.end,
-              membershipStatus: 'active',
-            }
-          : undefined,
-      payment: {
-        method,
-        amount:
-          offer === 'membership'
-            ? MEMBERSHIP_PRICE
-            : EVENTS[0].ticketPrice * quantity,
-        status: 'simulated',
-      },
-      demo: false,
-    };
-    this.save({ ...this.state(), orders: [order, ...this.orders()] });
-    return order;
-  }
-
-  verify(id: string, event: Event) {
-    const input = id.trim();
-    const matches = new Set<string>();
-    for (const order of this.orders()) {
-      if (
-        order.membership &&
-        [order.membership.id, order.membership.memberNumber].some(
-          (code) => code.toUpperCase() === input.toUpperCase(),
-        )
-      )
-        matches.add(order.membership.id);
-      for (const ticket of order.tickets)
-        if (
-          [ticket.id, ticketAccessCode(ticket.id)].some(
-            (code) => code.toUpperCase() === input.toUpperCase(),
-          )
-        )
-          matches.add(ticket.id);
+  async reserve(raw: ReservationInput): Promise<Reservation> {
+    await this.initialize();
+    const input = validateReservation(raw);
+    let reservation: Reservation;
+    if (this.mode() === 'demo') {
+      this.syncDemo();
+      const prior = this.demoRequests.get(input.requestId);
+      const existing = this.orders().find((r) => r.reference === prior);
+      if (existing) return existing;
+      if (input.quantity > this.remaining())
+        throw new Error('Il ne reste pas assez de places.');
+      reservation = {
+        id: crypto.randomUUID(),
+        reference: `R-${crypto.randomUUID().replace(/-/g, '').toUpperCase()}`,
+        fullName: input.fullName,
+        phone: input.phone,
+        quantity: input.quantity,
+        amount: input.quantity * this.event().ticketPrice,
+        status: 'pending_payment',
+        createdAt: new Date().toISOString(),
+        validatedAt: null,
+        contactedAt: null,
+        tickets: [],
+      };
+      this.saveDemo([reservation, ...this.orders()]);
+      this.demoRequests.set(input.requestId, reservation.reference);
+    } else {
+      if (this.mode() !== 'live')
+        throw new Error(
+          this.startupError() ||
+            'Les réservations ne sont pas encore ouvertes.',
+        );
+      reservation = await this.request<Reservation>('/api/reservations', input);
     }
-    // Un code ambigu n’autorise aucune entrée ; le QR complet reste utilisable.
-    return verifyAccess(
-      this.state(),
-      matches.size === 1 ? [...matches][0] : '',
-      event,
+    this.remember(reservation.reference);
+    await this.refreshMine();
+    return reservation;
+  }
+  async lookup(reference: string, remember = true): Promise<Reservation> {
+    await this.initializeIfNeeded();
+    const code = reference.trim().toUpperCase();
+    let reservation: Reservation;
+    if (this.mode() === 'demo') {
+      this.syncDemo();
+      const found = this.orders().find(
+        (r) => r.reference.toUpperCase() === code,
+      );
+      if (!found)
+        throw new Error('Réservation introuvable. Vérifiez votre code.');
+      reservation = structuredClone(found);
+    } else {
+      if (this.mode() !== 'live')
+        throw new Error(this.startupError() || 'Service indisponible.');
+      reservation = await this.request<Reservation>('/api/reservation', {
+        reference: code,
+      });
+    }
+    if (reservation.status !== 'validated')
+      reservation = { ...reservation, tickets: [] };
+    if (remember) this.remember(reservation.reference);
+    return reservation;
+  }
+  private async initializeIfNeeded(): Promise<void> {
+    if (this.mode() === 'loading') await this.initialize();
+  }
+  async refreshMine(): Promise<void> {
+    if (this.mode() === 'demo') {
+      this.syncDemo();
+      this.myOrders.set(
+        this.orders()
+          .filter((r) => this.refs.includes(r.reference))
+          .map((r) => (r.status === 'validated' ? r : { ...r, tickets: [] })),
+      );
+      return;
+    }
+    if (this.mode() !== 'live') return;
+    const reservations: Reservation[] = [];
+    for (const ref of this.refs) {
+      try {
+        reservations.push(await this.lookup(ref, false));
+      } catch {
+        /* Le code reste conservé pour une nouvelle tentative. */
+      }
+    }
+    this.myOrders.set(reservations);
+  }
+  async login(password: string): Promise<void> {
+    await this.initialize();
+    if (this.mode() === 'demo') return;
+    await this.request('/api/admin-session', { password });
+    this.admin.set(true);
+  }
+  async logout(): Promise<void> {
+    if (this.mode() === 'live')
+      await this.request('/api/admin-session', {}, 'DELETE');
+    this.admin.set(false);
+    this.orders.set([]);
+  }
+  async loadAdmin(): Promise<void> {
+    await this.initialize();
+    if (!this.admin()) return;
+    if (this.mode() === 'demo') {
+      this.syncDemo();
+      return;
+    }
+    this.orders.set(
+      await this.request<Reservation[]>('/api/admin-reservations'),
     );
   }
-
-  updateEvent(id: string, capacity: number, simulationDate: string): void {
-    if (
-      !Number.isInteger(capacity) ||
-      capacity < 1 ||
-      capacity > 10000 ||
-      !/^\d{4}-\d{2}-\d{2}$/.test(simulationDate) ||
-      !Number.isFinite(Date.parse(simulationDate))
-    )
-      throw new Error(
-        'Renseignez une capacité de 1 à 10 000 et une date valide.',
-      );
-    const minimum = Math.max(
-      this.orders().reduce(
-        (n, o) => n + o.tickets.filter((t) => t.eventId === id).length,
-        0,
-      ),
-      this.state().checkIns.filter((c) => c.eventId === id).length,
+  async updateReservation(
+    id: string,
+    action: 'contact' | 'validate' | 'cancel',
+  ): Promise<void> {
+    if (!this.admin())
+      throw new Error('Connectez-vous à l’espace organisateur.');
+    if (this.mode() === 'demo') {
+      this.syncDemo();
+      const reservation = this.orders().find((r) => r.id === id);
+      if (!reservation) throw new Error('Réservation introuvable.');
+      if (action === 'validate' && reservation.status === 'cancelled')
+        throw new Error('Une réservation annulée ne peut plus être validée.');
+      if (action === 'validate' && reservation.status === 'validated') return;
+      if (action === 'cancel' && reservation.tickets.some((t) => t.checkedInAt))
+        throw new Error('Un billet déjà utilisé ne peut pas être annulé.');
+      const now = new Date().toISOString();
+      const next =
+        action === 'contact'
+          ? { ...reservation, contactedAt: now }
+          : action === 'cancel'
+            ? { ...reservation, status: 'cancelled' as const, tickets: [] }
+            : {
+                ...reservation,
+                status: 'validated' as const,
+                validatedAt: now,
+                tickets: Array.from({ length: reservation.quantity }, () => {
+                  const id = crypto.randomUUID();
+                  return {
+                    id,
+                    code: `B-${id.replace(/-/g, '').slice(0, 12).toUpperCase()}`,
+                    checkedInAt: null,
+                  };
+                }),
+              };
+      this.saveDemo(this.orders().map((r) => (r.id === id ? next : r)));
+    } else await this.request('/api/admin-reservation', { id, action });
+    await this.loadAdmin();
+    await this.refreshMine();
+    this.notify(
+      action === 'validate'
+        ? 'Paiement confirmé. Le billet peut maintenant être consulté et téléchargé.'
+        : action === 'contact'
+          ? 'Contact enregistré.'
+          : 'Réservation annulée.',
     );
-    if (capacity < minimum)
-      throw new Error(
-        'La capacité doit couvrir les tickets déjà vendus et les entrées validées.',
-      );
-    this.save({
-      ...this.state(),
-      events: this.events().map((e) =>
-        e.id === id ? { ...e, capacity, simulationDate } : e,
-      ),
-    });
-    this.notify('Configuration de démonstration enregistrée.');
   }
-
-  checkIn(id: string, event: Event): void {
-    const result = this.verify(id, event);
-    if (result.status !== 'valid-member' && result.status !== 'valid-ticket')
-      throw new Error(result.title);
-    if (
-      this.state().checkIns.filter((c) => c.eventId === event.id).length >=
-      event.capacity
-    )
-      throw new Error('Capacité de cet événement atteinte.');
-    this.save({
-      ...this.state(),
-      checkIns: [
-        ...this.state().checkIns,
-        {
-          id: crypto.randomUUID(),
-          credentialId: result.credentialId,
-          eventId: event.id,
-          checkedInAt: new Date().toISOString(),
-        },
-      ],
+  async verify(code: string): Promise<AccessResult> {
+    await this.initialize();
+    if (!this.admin())
+      throw new Error('Connectez-vous pour contrôler les billets.');
+    if (this.mode() === 'demo') {
+      this.syncDemo();
+      return inspectAccess(this.orders(), code);
+    }
+    return this.request<AccessResult>('/api/admin-scan', {
+      code,
+      confirm: false,
     });
-    this.notify('Entrée validée dans la démonstration.');
   }
-
-  redeemPopcorn(id: string, event: Event): void {
-    const result = this.verify(id, event);
-    if (
-      !result.popcornEligible ||
-      result.popcornRedeemed ||
-      result.status === 'denied' ||
-      result.status === 'unknown'
-    )
-      throw new Error(
-        'Ce QR code ne permet pas un nouveau retrait de popcorn.',
+  async checkIn(code: string): Promise<AccessResult> {
+    if (this.mode() === 'demo') {
+      const result = await this.verify(code);
+      if (result.status !== 'valid') throw new Error(result.title);
+      this.saveDemo(
+        this.orders().map((r) => ({
+          ...r,
+          tickets: r.tickets.map((t) =>
+            t.id === result.ticketId
+              ? { ...t, checkedInAt: new Date().toISOString() }
+              : t,
+          ),
+        })),
       );
-    this.save({
-      ...this.state(),
-      popcornRedemptions: [
-        ...this.state().popcornRedemptions,
-        {
-          id: crypto.randomUUID(),
-          credentialId: result.credentialId,
-          eventId: event.id,
-          redeemedAt: new Date().toISOString(),
-        },
-      ],
+      return this.verify(code);
+    }
+    const result = await this.request<AccessResult>('/api/admin-scan', {
+      code,
+      confirm: true,
     });
-    this.notify('Popcorn distribué. Le statut de l’entrée reste indépendant.');
+    await this.loadAdmin();
+    return result;
+  }
+  async authorizedTicket(
+    reference: string,
+    ticketId: string,
+  ): Promise<{ reservation: Reservation; ticket: Ticket }> {
+    const reservation = await this.lookup(reference, false);
+    const ticket = reservation.tickets.find((t) => t.id === ticketId);
+    if (reservation.status !== 'validated' || !ticket)
+      throw new Error(
+        'Le billet sera disponible après confirmation du paiement par le club.',
+      );
+    return { reservation, ticket };
   }
 }

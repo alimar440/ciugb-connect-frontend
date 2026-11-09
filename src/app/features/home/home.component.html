@@ -1,129 +1,102 @@
-<section class="hero section-shell">
+<section class="section-shell thriller-hero">
   <div class="hero-copy">
     <p class="eyebrow">
-      <span class="red-dot"></span> 72H DU CLUB INFORMATIQUE
+      <span class="red-dot"></span>72H DU CLUB INFORMATIQUE · UGB
     </p>
+    <span class="genre-label">LE RENDEZ-VOUS THRILLER</span>
     <h1>
-      Une soirée<br />cinéma.<br /><span class="text-red">Une expérience</span
-      ><br />à partager.
+      Les lumières<br />s’éteignent.<br /><em>Le suspense<br />commence.</em>
     </h1>
     <p class="hero-description">
-      On ferme les écrans de code. On ouvre le grand écran.<br
-        class="desktop-only"
-      />
-      Retrouvez le Club Informatique de l’UGB pour une soirée à vivre ensemble,
-      au cœur des 72h.
+      Un grand écran. Des amis. Ce petit frisson qu’on préfère partager. La
+      soirée cinéma des 72h vous attend sur le campus de l’UGB.
     </p>
     <div class="button-row">
-      <a
-        class="button"
-        routerLink="/commander"
-        [queryParams]="{ offre: 'ticket' }"
-        >Réserver mon ticket <app-icon name="ArrowUpRight" /></a
-      ><a class="button button-outline" routerLink="/adhesion"
-        >Devenir membre <app-icon name="ArrowRight"
+      <a routerLink="/commander" class="button"
+        >Je réserve ma place <app-icon name="ArrowUpRight" /></a
+      ><a routerLink="/mes-billets" class="text-link"
+        >J’ai déjà réservé <app-icon name="ArrowRight"
       /></a>
     </div>
     <div class="hero-meta">
-      <span><app-icon name="MapPin" [size]="16" /> UGB, Saint-Louis</span
-      ><span
-        ><app-icon name="CalendarDays" [size]="16" /> Date à confirmer</span
-      >
+      <span><app-icon name="MapPin" [size]="16" />UGB, Saint-Louis</span
+      ><span><app-icon name="CalendarDays" [size]="16" />Date à confirmer</span>
     </div>
   </div>
-  <div class="hero-visual">
+  <div class="thriller-art">
     <img
-      src="cinema-poster.svg"
-      alt="Affiche originale : Le campus fait son cinéma. Club Informatique de l’UGB."
+      src="thriller-poster.svg"
       width="720"
       height="880"
+      alt="Illustration originale : une porte entrouverte éclaire un couloir violet. La nuit promet du suspense."
       fetchpriority="high"
     />
-    <div class="poster-stamp">
-      <span>72</span><small>HEURES POUR<br />SE CONNECTER</small
-      ><app-icon name="ArrowUpRight" [size]="24" />
-    </div>
-    <div class="poster-caption">
-      <span>LE RENDEZ-VOUS DU CAMPUS</span><span>ÉDITION 72H ↗</span>
+    <div class="cinema-price">
+      <span>UNE PLACE</span><strong>500 <small>FCFA</small></strong
+      ><span>LE FRISSON SE PARTAGE.</span>
     </div>
   </div>
 </section>
-<div class="ticker" aria-label="Cinéma, rencontres et vie de club">
-  <span>CINÉMA</span><span class="ticker-symbol">✳</span><span>RENCONTRES</span
-  ><span class="ticker-symbol">✳</span><span>ESPRIT DE CLUB</span
-  ><span class="ticker-symbol">✳</span><span>72H ENSEMBLE</span>
+<div class="ticker">
+  <span>UN PEU DE SUSPENSE</span
+  ><span class="ticker-symbol" aria-hidden="true">✳</span
+  ><span>BEAUCOUP D’AMBIANCE</span
+  ><span class="ticker-symbol" aria-hidden="true">✳</span
+  ><span>72H ENSEMBLE</span>
 </div>
-<section class="section-shell offers-section" id="formules">
-  <div class="section-heading">
-    <div>
-      <p class="eyebrow">01 / CHOISISSEZ VOTRE EXPÉRIENCE</p>
-      <h2>Une soirée ou<br />toute une année ?</h2>
-    </div>
-    <p>Une place pour le cinéma.<br />Ou une place dans le club.</p>
+<section class="section-shell suspense-section">
+  <div>
+    <p class="eyebrow">LE PROGRAMME ? ON GARDE UN PEU DE MYSTÈRE.</p>
+    <h2>
+      Gardez votre soirée.<br /><span class="text-red"
+        >On s’occupe des frissons.</span
+      >
+    </h2>
+    <p>
+      Le film et les informations pratiques seront annoncés par le club. En
+      attendant, réservez votre place pour une projection à vivre ensemble.
+    </p>
+    <a routerLink="/cinema" class="text-link"
+      >Tout savoir sur la soirée <app-icon name="ArrowUpRight"
+    /></a>
   </div>
-  <div class="offers-grid">
-    <article class="offer-card">
-      <div class="offer-top">
-        <span class="icon-box"><app-icon name="Ticket" [size]="26" /></span
-        ><span class="eyebrow">LE RENDEZ-VOUS CINÉMA</span>
-      </div>
-      <h3>Ticket cinéma</h3>
-      <div class="price">500 <span>FCFA / personne</span></div>
-      <p class="muted">Le grand écran, les amis et une belle soirée.</p>
-      <ul class="benefits">
-        <li>
-          <app-icon name="Check" [size]="18" />Accès à la soirée cinéma des 72h
-        </li>
-        <li>
-          <app-icon name="Check" [size]="18" />Ticket numérique avec QR code
-          individuel
-        </li>
-        <li><app-icon name="Check" [size]="18" />Validation à l’entrée</li>
-      </ul>
-      <p class="offer-note">Popcorn non inclus dans le ticket.</p>
-      <a
-        class="button button-outline full-width"
-        routerLink="/commander"
-        [queryParams]="{ offre: 'ticket' }"
-        >Acheter mon ticket <app-icon name="ArrowUpRight"
-      /></a>
-    </article>
-    <article class="offer-card featured">
-      <span class="offer-label">LE CHOIX POUR TOUTE L’ANNÉE</span>
-      <div class="offer-top">
-        <span class="icon-box"><app-icon name="CreditCard" [size]="26" /></span
-        ><span class="eyebrow">L’ESPRIT DE CLUB</span>
-      </div>
-      <h3>Carte membre annuelle</h3>
-      <div class="price">1 000 <span>FCFA / année universitaire</span></div>
-      <p class="value-line">1 000 FCFA. Une année entière d'avantages.</p>
-      <app-benefits />
-      <p class="offer-note">
-        Adhésion individuelle · droits valables pendant l’année universitaire.
-      </p>
-      <a
-        class="button full-width"
-        routerLink="/commander"
-        [queryParams]="{ offre: 'membership' }"
-        >Devenir membre <app-icon name="ArrowUpRight"
-      /></a>
-    </article>
-  </div>
-  <p class="section-footnote">
-    <app-icon name="ShieldCheck" [size]="16" /> La validité de la carte est
-    vérifiée à chaque événement. Une carte expirée ne donne plus accès aux
-    avantages.
-  </p>
+  <article class="tinted-offer">
+    <app-icon name="Ticket" [size]="32" /><span class="eyebrow"
+      >UNE SEULE FORMULE. VOTRE PLACE.</span
+    >
+    <h3>Le billet cinéma</h3>
+    <div class="price">500 <span>FCFA / personne</span></div>
+    <ul class="benefits">
+      <li>
+        <app-icon name="Check" [size]="18" />Une entrée à la soirée cinéma des
+        72h
+      </li>
+      <li>
+        <app-icon name="Check" [size]="18" />Un QR individuel après confirmation
+        du paiement
+      </li>
+      <li>
+        <app-icon name="Check" [size]="18" />Votre billet à garder en PDF ou PNG
+      </li>
+    </ul>
+    <p class="small muted">
+      Pas de paiement en ligne. Le club vous contacte après la réservation.
+    </p>
+    <a routerLink="/commander" class="button full-width"
+      >Réserver mon billet <app-icon name="ArrowUpRight"
+    /></a>
+  </article>
 </section>
 <section class="how-section">
   <div class="section-shell">
-    <p class="eyebrow">02 / DU CHOIX AU PREMIER RANG</p>
-    <h2>Votre place, en quelques étapes.</h2>
-    <ol class="steps-grid">
-      @for (step of steps; track step; let i = $index) {
+    <p class="eyebrow">COMMENT ÇA SE PASSE ?</p>
+    <h2>Réservez maintenant.<br />Le club prend la suite.</h2>
+    <ol class="reservation-steps">
+      @for (step of steps; track step.title; let i = $index) {
         <li>
           <span class="step-number">0{{ i + 1 }}</span>
-          <h3>{{ step }}</h3>
+          <h3>{{ step.title }}</h3>
+          <p>{{ step.text }}</p>
         </li>
       }
     </ol>
@@ -132,22 +105,18 @@
 <section class="section-shell club-section">
   <div class="club-graphic" aria-hidden="true">
     <span class="giant-number">72<span>h</span></span
-    ><span class="graphic-label">APPRENDRE. PARTAGER. SE RETROUVER.</span>
+    ><span class="graphic-label">DU CODE AU GRAND ÉCRAN.</span>
   </div>
   <div>
-    <p class="eyebrow">03 / BIEN PLUS QUE DU CODE</p>
-    <h2>Le club, c’est aussi<br />ce qui nous relie.</h2>
+    <p class="eyebrow">LE CAMPUS A RENDEZ-VOUS.</p>
+    <h2>Une pause dans le code.<br />Une soirée dans l’histoire.</h2>
     <p>
-      Les Journées Portes Ouvertes du Club Informatique de l’Université Gaston
-      Berger sont un moment pour se rencontrer, partager notre passion et faire
-      vivre le campus.
+      Les 72h du Club Informatique de l’Université Gaston Berger, c’est aussi le
+      plaisir de se retrouver. Venez avec vos amis, on vous attend devant le
+      grand écran.
     </p>
-    <p>
-      La soirée cinéma s’inscrit dans cet esprit. Venez pour le film, restez
-      pour les rencontres.
-    </p>
-    <a routerLink="/adhesion" class="text-link"
-      >Faire partie de l’aventure <app-icon name="ArrowUpRight"
+    <a routerLink="/commander" class="text-link"
+      >Faire partie de la soirée <app-icon name="ArrowUpRight"
     /></a>
   </div>
 </section>

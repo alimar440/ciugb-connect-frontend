@@ -1,8 +1,14 @@
 <a class="skip-link" href="#main">Aller au contenu</a>
-<div class="demo-ribbon">
-  VERSION DE DÉMONSTRATION
-  <span>· Paiements et contrôles simulés localement</span>
-</div>
+@if (store.mode() === "demo") {
+  <div class="demo-ribbon">
+    DÉMONSTRATION LOCALE <span>· Aucune réservation n’est envoyée au club</span>
+  </div>
+} @else {
+  <div class="demo-ribbon">
+    72H DU CLUB INFORMATIQUE UGB
+    <span>· Réservez, le club vous contacte pour le paiement</span>
+  </div>
+}
 <header class="site-header">
   <a routerLink="/" class="brand" aria-label="Club Informatique UGB, accueil"
     ><app-club-logo />
@@ -49,12 +55,6 @@
       >Soirée cinéma</a
     >
     <a
-      routerLink="/adhesion"
-      routerLinkActive="active"
-      (click)="menuOpen.set(false)"
-      >Carte membre</a
-    >
-    <a
       routerLink="/mes-billets"
       routerLinkActive="active"
       (click)="menuOpen.set(false)"
@@ -80,16 +80,18 @@
     <p>Club Informatique de l’UGB<br />Campus de Saint-Louis, Sénégal</p>
     <div class="footer-links">
       <a routerLink="/cinema">Soirée cinéma</a
-      ><a routerLink="/adhesion">Devenir membre</a
-      ><a routerLink="/mes-billets">Retrouver mes achats</a>
+      ><a routerLink="/commander">Réserver une place</a
+      ><a routerLink="/mes-billets">Suivre ma réservation</a>
     </div>
   </div>
   <div class="footer-bottom">
     <span>© {{ year }} Club Informatique UGB · CIUGB Connect</span>
     <div>
       <a routerLink="/scan">Contrôle des accès</a
-      ><a routerLink="/admin">Espace organisateur</a
-      ><span class="muted">Démo locale</span>
+      ><a routerLink="/admin">Espace organisateur</a>
+      @if (store.mode() === "demo") {
+        <span class="muted">Démo locale</span>
+      }
     </div>
   </div>
   <p class="footer-note">

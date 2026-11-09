@@ -1,110 +1,80 @@
 import { ClubStore } from './club-store.service';
-import { EVENTS } from '../core/catalog';
-import { Member } from '../models/domain';
-const KEY = 'ciugb-connect-demo-v1';
-const person: Member = {
-  firstName: 'Awa',
-  lastName: 'Test',
-  email: 'awa@example.com',
-  phone: '+221770000000',
-  studentNumber: '',
-};
-describe('Local demo transactions', () => {
+import { ReservationInput } from '../models/domain';
+describe('Reservation lifecycle in local demonstration', () => {
   let store: ClubStore;
-  beforeEach(() => {
-    localStorage.removeItem(KEY);
-    jasmine.clock().install();
-    jasmine.clock().mockDate(new Date('2026-11-08T12:00:00Z'));
+  const input = (): ReservationInput => ({
+    fullName: 'Awa Test',
+    phone: '+221770000000',
+    quantity: 2,
+    requestId: crypto.randomUUID(),
+  });
+  beforeEach(async () => {
+    localStorage.removeItem('ciugb-reservations-demo-v2');
+    localStorage.removeItem('ciugb-reservation-references-v2');
+    spyOn(window, 'fetch').and.rejectWith(new Error('Local demo'));
     store = new ClubStore();
+    await store.initialize();
   });
   afterEach(() => {
-    localStorage.removeItem(KEY);
-    jasmine.clock().uninstall();
+    localStorage.removeItem('ciugb-reservations-demo-v2');
+    localStorage.removeItem('ciugb-reservation-references-v2');
   });
-  it('issues one annual membership for 1000 FCFA with an opaque personal identifier', () => {
-    const order = store.purchase('membership', 1, person, 'wave');
-    expect(order.payment.amount).toBe(1000);
-    expect(order.payment.status).toBe('simulated');
-    expect(order.membership?.membershipStartDate).toBe('2026-11-08');
-    expect(order.membership?.membershipEndDate).toBe('2027-07-31');
-    expect(order.membership?.membershipStatus).toBe('active');
-    expect(order.membership?.id).not.toContain('awa');
-    expect(order.tickets.length).toBe(0);
+  it('records a reservation without granting a ticket or QR', async () => {
+    const r = await store.reserve(input());
+    expect(r.status).toBe('pending_payment');
+    expect(r.tickets).toEqual([]);
+    expect(r.amount).toBe(1000);
+    expect((await store.lookup(r.reference)).tickets).toEqual([]);
+    await expectAsync(
+      store.authorizedTicket(r.reference, 'forged'),
+    ).toBeRejected();
   });
-  it('rejects collective memberships and invalid ticket quantities', () => {
-    expect(() =>
-      store.purchase('membership', 2, person, 'wave'),
-    ).toThrowError();
-    for (const quantity of [0, -1, 1.5, 11, NaN])
-      expect(() =>
-        store.purchase('ticket', quantity, person, 'wave'),
-      ).toThrowError();
+  it('unlocks two separate tickets after manual validation only', async () => {
+    const r = await store.reserve(input());
+    await store.updateReservation(r.id, 'contact');
+    expect((await store.lookup(r.reference)).tickets.length).toBe(0);
+    await store.updateReservation(r.id, 'validate');
+    const paid = await store.lookup(r.reference);
+    expect(paid.tickets.length).toBe(2);
+    expect(paid.tickets[0].id).not.toBe(paid.tickets[1].id);
+    expect(
+      (await store.authorizedTicket(r.reference, paid.tickets[0].id)).ticket.id,
+    ).toBe(paid.tickets[0].id);
   });
-  it('generates a different QR identifier for every ticket and persists the purchase', () => {
-    const order = store.purchase('ticket', 3, person, 'orange-money');
-    expect(order.payment.amount).toBe(1500);
-    expect(new Set(order.tickets.map((t) => t.id)).size).toBe(3);
-    expect(new ClubStore().myOrders()[0].id).toBe(order.id);
+  it('does not duplicate a submitted reservation or a validation', async () => {
+    const data = input();
+    const r = await store.reserve(data);
+    expect((await store.reserve(data)).id).toBe(r.id);
+    await store.updateReservation(r.id, 'validate');
+    const paid = await store.lookup(r.reference);
+    await store.updateReservation(r.id, 'validate');
+    expect((await store.lookup(r.reference)).tickets).toEqual(paid.tickets);
   });
-  it('rejects repeat entries without affecting popcorn', () => {
-    store.checkIn('demo-member', EVENTS[0]);
-    expect(() => store.checkIn('demo-member', EVENTS[0])).toThrowError();
-    expect(store.data().popcornRedemptions.length).toBe(0);
-    expect(store.verify('demo-member', EVENTS[0]).popcornEligible).toBeTrue();
-    store.redeemPopcorn('demo-member', EVENTS[0]);
-    expect(store.verify('demo-member', EVENTS[0]).popcornRedeemed).toBeTrue();
-    expect(() => store.redeemPopcorn('demo-member', EVENTS[0])).toThrowError();
+  it('refuses a reservation code and blocks reused tickets', async () => {
+    expect((await store.verify('DEMO-ATTENTE')).status).toBe('denied');
+    await store.checkIn('B-DEMO-VALIDE');
+    expect((await store.verify('demo-ticket')).status).toBe('used');
+    await expectAsync(store.checkIn('demo-ticket')).toBeRejected();
   });
-  it('can distribute popcorn before entry, without consuming the entry', () => {
-    store.redeemPopcorn('demo-member', EVENTS[0]);
-    expect(store.verify('demo-member', EVENTS[0]).status).toBe('valid-member');
-    store.checkIn('demo-member', EVENTS[0]);
-    expect(store.data().popcornRedemptions.length).toBe(1);
+  it('revokes access and downloads after cancellation', async () => {
+    const r = await store.reserve(input());
+    await store.updateReservation(r.id, 'validate');
+    const paid = await store.lookup(r.reference);
+    await store.updateReservation(r.id, 'cancel');
+    expect((await store.lookup(r.reference)).tickets).toEqual([]);
+    await expectAsync(
+      store.authorizedTicket(r.reference, paid.tickets[0].id),
+    ).toBeRejected();
   });
-  it('allows the same membership to enter another event, but never after expiration', () => {
-    store.checkIn('demo-member', EVENTS[0]);
-    store.checkIn('demo-member', EVENTS[1]);
-    expect(() => store.checkIn('demo-member', EVENTS[2])).toThrowError();
-  });
-  it('does not distribute popcorn for expired cards, tickets or workshops', () => {
-    expect(() => store.redeemPopcorn('demo-expired', EVENTS[0])).toThrowError();
-    expect(() => store.redeemPopcorn('demo-ticket', EVENTS[0])).toThrowError();
-    expect(() => store.redeemPopcorn('demo-member', EVENTS[1])).toThrowError();
-    expect(store.data().popcornRedemptions.length).toBe(0);
-  });
-  it('normalizes pasted identifiers before recording their consumption', () => {
-    store.checkIn(' demo-member ', EVENTS[0]);
-    expect(() => store.checkIn('demo-member', EVENTS[0])).toThrowError();
-    store.redeemPopcorn(' demo-member ', EVENTS[0]);
-    expect(() => store.redeemPopcorn('demo-member', EVENTS[0])).toThrowError();
-  });
-  it('resolves a typed ticket code to the same access as its QR', () => {
-    expect(store.verify('t-demoticket', EVENTS[0]).credentialId).toBe('demo-ticket');
-    store.checkIn('T-DEMOTICKET', EVENTS[0]);
-    expect(store.verify('demo-ticket', EVENTS[0]).status).toBe('used');
-    expect(() => store.checkIn('demo-ticket', EVENTS[0])).toThrowError();
-  });
-  it('uses the membership number for both entry and the independent popcorn withdrawal', () => {
-    store.redeemPopcorn('ci-member', EVENTS[0]);
-    expect(store.verify('demo-member', EVENTS[0]).popcornRedeemed).toBeTrue();
-    expect(store.verify('CI-member', EVENTS[0]).status).toBe('valid-member');
-    store.checkIn('CI-member', EVENTS[0]);
-    expect(store.verify('demo-member', EVENTS[0]).status).toBe('used');
-  });
-  it('rejects ticket purchases beyond configured capacity', () => {
-    store.updateEvent('cinema-72h', 2, EVENTS[0].simulationDate);
-    expect(store.remaining()).toBe(0);
-    expect(() => store.purchase('ticket', 1, person, 'wave')).toThrowError();
-  });
-  it('does not report success if local persistence fails', () => {
-    spyOn(localStorage, 'setItem').and.throwError('QuotaExceededError');
-    expect(() => store.purchase('membership', 1, person, 'wave')).toThrowError(
-      /stockage local/,
-    );
-    expect(store.myOrders().length).toBe(0);
-  });
-  it('recovers from invalid local JSON', () => {
-    localStorage.setItem(KEY, '{broken');
-    expect(new ClubStore().orders().length).toBe(4);
+  it('refuses invalid quantities and phone numbers', async () => {
+    await expectAsync(
+      store.reserve({ ...input(), quantity: 0 }),
+    ).toBeRejected();
+    await expectAsync(
+      store.reserve({ ...input(), quantity: 1.5 }),
+    ).toBeRejected();
+    await expectAsync(
+      store.reserve({ ...input(), phone: 'hello' }),
+    ).toBeRejected();
   });
 });

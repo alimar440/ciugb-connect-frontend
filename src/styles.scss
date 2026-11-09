@@ -2,9 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-.download-format { margin-bottom: 24px; }
-.download-format select { max-width: 360px; }
-.download-format p { margin-block: 7px 0; }
+.download-format {
+  margin-bottom: 24px;
+}
+.download-format select {
+  max-width: 360px;
+}
+.download-format p {
+  margin-block: 7px 0;
+}
 
 .camera-frame video {
   width: 100%;
@@ -2132,5 +2138,532 @@ td small {
     animation: none !important;
     transition: none !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* La soirée : une teinte prune, des touches ambrées et le rouge du club. */
+:root {
+  --ink: #17121d;
+  --surface: #211a27;
+  --surface-secondary: #251d2b;
+  --surface-raised: #302535;
+  --line: #403046;
+  --line-strong: #6b526e;
+  --text-secondary: #c4b5c4;
+  --text-muted: #ac9eaf;
+  --paper: #faf0e3;
+}
+:root[data-theme="light"] {
+  --ink: #fbf7f1;
+  --surface: #ffffff;
+  --surface-secondary: #f1e9e9;
+  --surface-raised: #e9dedf;
+  --line: #e0d3d9;
+  --line-strong: #b59da8;
+  --text-secondary: #665365;
+  --text-muted: #796573;
+  --paper: #2c1e2e;
+}
+.thriller-hero {
+  display: grid;
+  grid-template-columns: 1.12fr 1fr;
+  gap: 65px;
+  align-items: center;
+  padding-block: 65px 85px;
+}
+.thriller-hero h1 {
+  font-size: clamp(3.7rem, 5.9vw, 5.4rem);
+  line-height: 1.03;
+  margin: 23px 0;
+  letter-spacing: -0.055em;
+}
+.thriller-hero h1 em {
+  color: #e7b180;
+  font-family: Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.065em;
+}
+.genre-label {
+  display: inline-block;
+  font: 600 0.63rem/1.4 monospace;
+  letter-spacing: 0.12em;
+  background: #e9bd8c;
+  color: #3d2439;
+  padding: 7px 11px;
+  border-radius: 3px;
+}
+.hero-copy > .genre-label {
+  margin-top: 15px;
+}
+.thriller-art {
+  position: relative;
+  padding-bottom: 24px;
+}
+.thriller-art > img {
+  display: block;
+  width: 100%;
+  max-height: 640px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.cinema-price {
+  position: absolute;
+  right: -17px;
+  bottom: 55px;
+  background: #efd2a9;
+  color: #362038;
+  padding: 20px 26px;
+  transform: rotate(-5deg);
+  display: grid;
+  gap: 2px;
+  box-shadow: 0 8px 30px #100b2040;
+}
+.cinema-price > span {
+  font: 0.58rem monospace;
+  letter-spacing: 0.13em;
+}
+.cinema-price strong {
+  font-size: 2.8rem;
+  line-height: 1.4;
+  letter-spacing: -0.06em;
+}
+.cinema-price small {
+  font: 0.7rem monospace;
+  letter-spacing: 0;
+}
+.suspense-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+  padding-block: 95px;
+}
+.suspense-section h2 {
+  margin-block: 22px;
+}
+.suspense-section > div > p:not(.eyebrow) {
+  color: var(--text-secondary);
+  max-width: 490px;
+  font-size: 0.94rem;
+}
+.tinted-offer {
+  padding: 34px;
+  background: #302133;
+  border: 1px solid #72506b;
+  border-radius: 10px;
+}
+.tinted-offer > app-icon {
+  color: #e7b180;
+  margin-bottom: 20px;
+}
+.tinted-offer > .eyebrow {
+  display: block;
+  margin-bottom: 12px;
+}
+.tinted-offer h3 {
+  font-size: 1.8rem;
+}
+.reservation-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+  list-style: none;
+  padding: 0;
+  margin-top: 45px;
+}
+.reservation-steps h3 {
+  font-size: 1.15rem;
+}
+.reservation-steps p {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+.reservation-summary-art {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  padding: 25px 0;
+  color: #e9b993;
+}
+.reservation-summary-art span {
+  font: 0.75rem monospace;
+  letter-spacing: 0.14em;
+}
+.reservation-confirmation {
+  padding: 40px;
+}
+.reservation-code {
+  border: 1px dashed var(--line-strong);
+  border-radius: 8px;
+  padding: 24px;
+  margin-top: 28px;
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+}
+.reservation-code code {
+  font-size: 1rem;
+}
+.reservation-code .small {
+  font-size: 0.65rem;
+}
+.reservation-card-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  align-items: start;
+  margin-bottom: 28px;
+}
+.reservation-card-heading h3 {
+  margin-top: 12px;
+  font-size: 1.5rem;
+  overflow-wrap: anywhere;
+}
+.pending-ticket {
+  display: flex;
+  gap: 20px;
+  padding: 25px;
+  border: 1px dashed var(--line-strong);
+  background: var(--surface-secondary);
+  border-radius: 8px;
+}
+.pending-ticket > app-icon {
+  color: #d19b88;
+}
+.pending-ticket h3 {
+  font-size: 1.25rem;
+}
+.pending-ticket p {
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+  margin-bottom: 0;
+}
+.reservation-receipt {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.77rem;
+  color: var(--text-muted);
+  margin-top: 20px;
+}
+.private-reference {
+  display: block;
+  padding: 12px;
+  border-radius: 5px;
+  background: var(--surface-secondary);
+}
+.reservation-list {
+  display: grid;
+  gap: 24px;
+  max-width: 960px;
+  margin: auto;
+}
+.lookup-form {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-bottom: 32px;
+}
+.lookup-form > div {
+  flex: 1;
+  min-width: 0;
+}
+.lookup-form input {
+  margin-bottom: 0;
+}
+.lookup-form button {
+  margin-top: 21px;
+}
+.small-heading {
+  font-size: 1.6rem;
+}
+.fun-ticket {
+  display: grid;
+  grid-template-columns: 1fr 210px;
+  background: linear-gradient(120deg, #39233e, #281a30 65%, #5b2a40);
+  color: #fff0df;
+  border: 1px solid #805468;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 20px;
+}
+.fun-ticket-copy {
+  padding: 28px;
+  min-width: 0;
+}
+.fun-ticket .eyebrow {
+  margin: 16px 0;
+  color: #d1a4bd;
+  font-size: 0.57rem;
+}
+.fun-ticket h3 {
+  font-weight: 850;
+  font-size: 2.6rem;
+  text-transform: uppercase;
+  line-height: 0.98;
+  letter-spacing: -0.06em;
+}
+.fun-ticket-copy > p:not(.eyebrow) {
+  font-size: 0.8rem;
+  color: #f0d8e5;
+  overflow-wrap: anywhere;
+}
+.fun-ticket-copy code {
+  display: block;
+  color: #f3c291;
+  margin-bottom: 20px;
+}
+.ticket-admit {
+  font: 0.65rem monospace;
+  letter-spacing: 0.12em;
+  color: #f3c291;
+}
+.ticket-qr-stub {
+  border-left: 1px dashed #a37b8d;
+  padding: 27px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  background: #8b415425;
+}
+.ticket-qr-stub app-qr {
+  width: 154px;
+}
+.ticket-qr-stub > span {
+  font: 0.55rem/1.7 monospace;
+  letter-spacing: 0.1em;
+  color: #e3bcbc;
+  text-align: center;
+}
+.ticket-rip::before,
+.ticket-rip::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  right: 199px;
+  background: var(--surface);
+}
+.ticket-rip::before {
+  top: -11px;
+}
+.ticket-rip::after {
+  bottom: -11px;
+}
+.scanner-section {
+  padding-bottom: 75px;
+}
+.scanner-section .scanner-layout {
+  padding-bottom: 30px;
+}
+.admin-login {
+  max-width: 500px;
+  margin: 20px auto 90px;
+}
+.admin-login h2 {
+  font-size: 2rem;
+  margin: 20px 0 30px;
+}
+.admin-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+.reservation-stats {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.reservation-filters {
+  grid-template-columns: 1.5fr 1fr;
+}
+.admin-bookings {
+  display: grid;
+  gap: 16px;
+}
+.admin-booking {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr 1fr;
+  gap: 25px;
+  padding: 24px 0;
+  border-top: 1px solid var(--line);
+}
+.booking-person,
+.booking-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+}
+.booking-person h3 {
+  font-size: 1.15rem;
+  overflow-wrap: anywhere;
+}
+.booking-person a {
+  color: var(--accent-text);
+  font-size: 0.9rem;
+}
+.booking-details > strong {
+  font-size: 0.85rem;
+}
+.booking-details > code {
+  font-size: 0.67rem;
+}
+.booking-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-content: start;
+  align-items: center;
+}
+.booking-actions .text-link {
+  font-size: 0.73rem;
+}
+.danger-link {
+  color: #e2929c;
+}
+.payment-confirmation {
+  border-color: #b8797f;
+  margin-bottom: 28px;
+}
+.payment-confirmation h2 {
+  font-size: 1.75rem;
+  margin: 15px 0;
+}
+:root[data-theme="light"] .thriller-hero h1 em {
+  color: #a0445e;
+}
+:root[data-theme="light"] .tinted-offer {
+  background: #f5e5ed;
+  border-color: #cc9fb6;
+}
+:root[data-theme="light"] .reservation-summary-art {
+  color: #8c3b59;
+}
+:root[data-theme="light"] .booking-person a,
+:root[data-theme="light"] .danger-link {
+  color: #9b2339;
+}
+@media (max-width: 1000px) {
+  .thriller-hero {
+    gap: 35px;
+  }
+  .thriller-hero h1 {
+    font-size: 4rem;
+  }
+  .suspense-section {
+    gap: 35px;
+  }
+  .admin-booking {
+    grid-template-columns: 1fr 1fr;
+  }
+  .booking-actions {
+    grid-column: 1/-1;
+  }
+}
+@media (max-width: 760px) {
+  .thriller-hero {
+    grid-template-columns: 1fr;
+    gap: 35px;
+    padding-block: 42px 50px;
+  }
+  .thriller-hero h1 {
+    font-size: clamp(3.2rem, 10.5vw, 4.5rem);
+  }
+  .thriller-art > img {
+    max-height: 600px;
+  }
+  .cinema-price {
+    right: -5px;
+    bottom: 50px;
+  }
+  .suspense-section {
+    grid-template-columns: 1fr;
+    padding-block: 55px;
+    gap: 32px;
+  }
+  .tinted-offer {
+    padding: 26px;
+  }
+  .reservation-steps {
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+  }
+  .reservation-steps .step-number {
+    display: block;
+    padding-bottom: 12px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid var(--line);
+  }
+  .lookup-form {
+    display: block;
+  }
+  .lookup-form .button {
+    width: 100%;
+    margin-top: 18px;
+  }
+  .reservation-confirmation {
+    padding: 24px;
+  }
+  .reservation-code {
+    padding: 17px;
+  }
+  .reservation-code code {
+    font-size: 0.75rem;
+  }
+  .reservation-card-heading {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .pending-ticket {
+    flex-direction: column;
+    padding: 22px;
+  }
+  .reservation-receipt {
+    font-size: 0.7rem;
+  }
+  .fun-ticket {
+    grid-template-columns: 1fr;
+  }
+  .fun-ticket-copy {
+    padding: 24px;
+  }
+  .fun-ticket h3 {
+    font-size: 2.6rem;
+  }
+  .ticket-qr-stub {
+    border-left: 0;
+    border-top: 1px dashed #a37b8d;
+    flex-direction: row;
+    padding: 25px;
+    gap: 25px;
+  }
+  .ticket-qr-stub app-qr {
+    width: 120px;
+    flex-shrink: 0;
+  }
+  .ticket-rip {
+    display: none;
+  }
+  .reservation-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+  .reservation-stats .stat-card:last-child {
+    grid-column: auto;
+  }
+  .reservation-filters {
+    grid-template-columns: 1fr;
+  }
+  .admin-booking {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .booking-actions {
+    grid-column: auto;
   }
 }

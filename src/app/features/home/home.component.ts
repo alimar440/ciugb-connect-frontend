@@ -1,18 +1,28 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IconComponent } from '../../shared/icon.component';
-import { BenefitsComponent } from '../../shared/benefits.component';
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, IconComponent, BenefitsComponent],
+  imports: [RouterLink, IconComponent],
   templateUrl: './home.component.html',
 })
 export class HomeComponent {
   readonly steps = [
-    'Choisissez votre formule',
-    'Renseignez vos informations',
-    'Simulez votre paiement',
-    'Recevez votre QR code',
-    'Présentez-le à l’entrée',
+    {
+      title: 'Vous réservez.',
+      text: 'Votre nom complet, votre téléphone et le nombre de places. C’est tout.',
+    },
+    {
+      title: 'On vous contacte.',
+      text: 'Le club vous appelle ou vous écrit pour convenir du paiement.',
+    },
+    {
+      title: 'On confirme.',
+      text: 'Après réception du paiement, un organisateur valide votre réservation.',
+    },
+    {
+      title: 'Le billet est à vous.',
+      text: 'Retrouvez votre QR et téléchargez votre billet en PDF ou PNG.',
+    },
   ];
 }

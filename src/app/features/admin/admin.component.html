@@ -1,218 +1,185 @@
 <section class="section-shell page-intro compact">
-  <p class="eyebrow">ESPACE ORGANISATEUR / DÉMONSTRATION NON SÉCURISÉE</p>
+  <p class="eyebrow">ORGANISATEURS / 72H DU CLUB</p>
   <div class="section-heading">
     <div>
-      <h1>Les 72h, côté coulisses.</h1>
+      <h1>On prépare<br /><span class="text-red">la salle.</span></h1>
       <p>
-        Achats, entrées et popcorn de la soirée cinéma des 72h. Les chiffres
-        incluent quatre commandes fictives.
+        Contactez les participants et confirmez les paiements pour débloquer
+        leurs billets.
       </p>
     </div>
-    <a routerLink="/scan" class="button"
-      >Contrôler un accès <app-icon name="ScanLine"
-    /></a>
+    @if (store.admin()) {
+      <a routerLink="/scan" class="button"
+        >Contrôler les entrées <app-icon name="ScanLine"
+      /></a>
+    }
   </div>
 </section>
 <section class="section-shell admin-section">
-  <div class="notice">
-    <app-icon name="ShieldCheck" /><span
-      >Accès de démonstration sans authentification. Les recettes ne
-      représentent aucun paiement réel. Les données personnelles de test restent
-      dans ce navigateur.</span
-    >
-  </div>
-  <div class="stats-grid">
-    @for (stat of stats(); track stat.label) {
-      <article class="stat-card">
-        <div>
-          <span>{{ stat.label }}</span
-          ><app-icon [name]="stat.icon" />
-        </div>
-        <strong>{{ stat.value | number: "1.0-0" }}</strong
-        ><small>{{ stat.suffix }}</small>
-      </article>
-    }
-  </div>
-  <div class="panel purchases-panel">
-    <div class="section-heading">
-      <div>
-        <p class="eyebrow">LE REGISTRE DES 72H</p>
-        <h2>Achats simulés</h2>
-      </div>
-      <span class="small muted">{{ filtered().length }} résultat(s)</span>
+  <app-admin-gate
+    ><div class="admin-toolbar">
+      <button class="text-link" (click)="load()" [disabled]="loading()">
+        Actualiser les réservations
+      </button>
+      @if (store.mode() === "live") {
+        <button class="text-link" (click)="logout()">Se déconnecter</button>
+      }
     </div>
-    <div class="admin-filters">
-      <div>
-        <label for="order-search">Rechercher une référence</label
-        ><input
-          id="order-search"
-          type="search"
-          placeholder="CI-… ou DEMO-…"
-          [ngModel]="search()"
-          (ngModelChange)="search.set($event)"
-        />
-      </div>
-      <div>
-        <label for="type-filter">Type d’achat</label
-        ><select
-          id="type-filter"
-          [ngModel]="type()"
-          (ngModelChange)="type.set($event)"
-        >
-          <option value="all">Tous les types</option>
-          <option value="ticket">Ticket cinéma</option>
-          <option value="membership">Carte membre</option>
-        </select>
-      </div>
-      <div>
-        <label for="status-filter">Statut</label
-        ><select
-          id="status-filter"
-          [ngModel]="status()"
-          (ngModelChange)="status.set($event)"
-        >
-          <option value="all">Tous les statuts</option>
-          <option value="active">Carte active</option>
-          <option value="expired">Carte expirée</option>
-          <option value="pending">Carte à venir</option>
-          <option value="suspended">Carte suspendue</option>
-          <option value="available">Tickets disponibles</option>
-          <option value="used">Tickets utilisés</option>
-        </select>
-      </div>
-    </div>
-    <div
-      class="table-scroll"
-      tabindex="0"
-      role="region"
-      aria-label="Tableau des achats, défilement horizontal"
-    >
-      <table>
-        <thead>
-          <tr>
-            <th>Référence</th>
-            <th>Participant</th>
-            <th>Formule</th>
-            <th>Montant simulé</th>
-            <th>Statut</th>
-            <th>Validité</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (order of filtered(); track order.id) {
-            <tr>
-              <td>
-                <code>{{ order.reference }}</code
-                ><small>{{
-                  order.demo ? "Exemple fictif" : "Achat sur cet appareil"
-                }}</small>
-              </td>
-              <td>{{ order.member.firstName }} {{ order.member.lastName }}</td>
-              <td>
-                {{
-                  order.offer === "membership"
-                    ? "Carte annuelle"
-                    : order.tickets.length + " ticket(s)"
-                }}
-              </td>
-              <td>{{ order.payment.amount | number: "1.0-0" }} FCFA</td>
-              <td>
-                <span
-                  class="status-pill"
-                  [class.status-good]="
-                    orderStatus(order) === 'active' ||
-                    orderStatus(order) === 'available'
-                  "
-                  >{{ statusLabel(order) }}</span
-                >
-              </td>
-              <td>
-                @if (order.membership; as member) {
-                  {{ member.membershipStartDate | date: "dd/MM/yyyy" }}<br />→
-                  {{ member.membershipEndDate | date: "dd/MM/yyyy" }}
-                } @else {
-                  Soirée cinéma des 72h
-                }
-              </td>
-            </tr>
-          } @empty {
-            <tr>
-              <td colspan="6" class="text-center">
-                Aucun achat ne correspond aux filtres.
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  </div>
-  <section class="event-management">
-    <div class="section-heading">
-      <div>
-        <p class="eyebrow">CONFIGURATION LOCALE</p>
-        <h2>La soirée cinéma des 72h</h2>
-      </div>
-    </div>
-    <p class="muted">
-      La date de simulation sert au contrôle de validité des cartes. La date
-      officielle de la soirée reste à confirmer.
-    </p>
-    <div class="event-72h-config">
-      @for (event of [event()]; track event.id) {
-        <article class="panel">
-          <app-icon
-            [name]="event.kind === 'cinema' ? 'Clapperboard' : 'Terminal'"
-            [size]="28"
-          />
-          <h3>{{ event.name }}</h3>
-          <p class="small">{{ event.dateLabel }}</p>
-          @if (editing() === event.id) {
-            <form (ngSubmit)="save()">
-              <label [for]="'date-' + event.id">Date de simulation</label
-              ><input
-                [id]="'date-' + event.id"
-                type="date"
-                name="simulationDate"
-                [(ngModel)]="simulationDate"
-                required
-              /><label [for]="'capacity-' + event.id">Capacité fictive</label
-              ><input
-                [id]="'capacity-' + event.id"
-                type="number"
-                name="capacity"
-                [(ngModel)]="capacity"
-                min="1"
-                max="10000"
-                required
-              />
-              @if (error()) {
-                <p class="field-error" role="alert">{{ error() }}</p>
-              }
-              <div class="button-row">
-                <button class="button button-small" type="submit">
-                  Enregistrer</button
-                ><button
-                  class="button button-ghost button-small"
-                  type="button"
-                  (click)="editing.set('')"
-                >
-                  Annuler
-                </button>
-              </div>
-            </form>
-          } @else {
-            <p>
-              <app-icon name="CalendarDays" [size]="16" /> Simulation :
-              {{ event.simulationDate | date: "dd/MM/yyyy" }}
-            </p>
-            <p class="small muted">Capacité : {{ event.capacity }} personnes</p>
-            <button class="text-link" (click)="edit(event)">
-              Modifier la simulation
-              <app-icon name="ArrowUpRight" [size]="16" />
-            </button>
-          }
+    <div class="stats-grid reservation-stats">
+      @for (stat of stats(); track stat.label) {
+        <article class="stat-card">
+          <div>
+            <span>{{ stat.label }}</span
+            ><app-icon [name]="stat.icon" />
+          </div>
+          <strong>{{ stat.value | number: "1.0-0" }}</strong
+          ><small>{{ stat.suffix }}</small>
         </article>
       }
     </div>
-  </section>
+    @if (error()) {
+      <p class="error-banner" role="alert">{{ error() }}</p>
+    }
+    @if (confirmation(); as reservation) {
+      <section
+        class="panel payment-confirmation"
+        role="region"
+        aria-label="Confirmation du paiement"
+      >
+        <p class="eyebrow">CONFIRMATION MANUELLE DU PAIEMENT</p>
+        <h2>Le club a-t-il bien reçu {{ reservation.amount }} FCFA ?</h2>
+        <p>
+          Participant : <strong>{{ reservation.fullName }}</strong> ·
+          {{ reservation.quantity }} place(s). La validation rend le billet et
+          son QR accessibles au participant.
+        </p>
+        <div class="button-row">
+          <button
+            class="button"
+            (click)="action(reservation, 'validate')"
+            [disabled]="!!busy()"
+          >
+            Oui, paiement reçu — valider le billet</button
+          ><button
+            class="button button-outline"
+            (click)="confirmation.set(null)"
+            [disabled]="!!busy()"
+          >
+            Retour
+          </button>
+        </div>
+      </section>
+    }
+    <div class="panel purchases-panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">LE REGISTRE DES 72H</p>
+          <h2>Réservations</h2>
+        </div>
+        <span class="small muted">{{ filtered().length }} dossier(s)</span>
+      </div>
+      <div class="admin-filters reservation-filters">
+        <div>
+          <label for="reservation-search">Nom, téléphone ou code</label
+          ><input
+            id="reservation-search"
+            type="search"
+            placeholder="Rechercher un participant…"
+            [ngModel]="search()"
+            (ngModelChange)="search.set($event)"
+          />
+        </div>
+        <div>
+          <label for="reservation-status">Statut de la réservation</label
+          ><select
+            id="reservation-status"
+            [ngModel]="status()"
+            (ngModelChange)="status.set($event)"
+          >
+            <option value="all">Tous les statuts</option>
+            <option value="pending_payment">En attente de paiement</option>
+            <option value="validated">Billet validé</option>
+            <option value="cancelled">Réservation annulée</option>
+          </select>
+        </div>
+      </div>
+      @if (loading()) {
+        <p role="status">Chargement des réservations…</p>
+      } @else {
+        <div class="admin-bookings">
+          @for (reservation of filtered(); track reservation.id) {
+            <article class="admin-booking">
+              <div class="booking-person">
+                <h3>{{ reservation.fullName }}</h3>
+                <a [href]="'tel:' + reservation.phone">{{
+                  reservation.phone
+                }}</a
+                ><span class="small muted">{{
+                  reservation.createdAt | date: "dd/MM/yyyy HH:mm"
+                }}</span>
+              </div>
+              <div class="booking-details">
+                <span
+                  class="status-pill"
+                  [class.status-good]="reservation.status === 'validated'"
+                  >{{ labels[reservation.status] }}</span
+                ><strong
+                  >{{ reservation.quantity }} place(s) ·
+                  {{ reservation.amount }} FCFA</strong
+                ><small class="muted">{{
+                  reservation.contactedAt
+                    ? "Contact enregistré"
+                    : "Pas encore contacté"
+                }}</small
+                ><code>{{ reservation.reference }}</code>
+              </div>
+              <div class="booking-actions">
+                @if (reservation.status === "pending_payment") {
+                  <a
+                    [href]="'tel:' + reservation.phone"
+                    class="button button-outline button-small"
+                    >Appeler</a
+                  ><a
+                    [href]="whatsapp(reservation.phone)"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="button button-outline button-small"
+                    >WhatsApp</a
+                  ><button
+                    class="button button-ghost button-small"
+                    (click)="action(reservation, 'contact')"
+                    [disabled]="!!busy() || !!reservation.contactedAt"
+                  >
+                    {{
+                      reservation.contactedAt ? "Contacté" : "Marquer contacté"
+                    }}</button
+                  ><button
+                    class="button button-small"
+                    (click)="confirmation.set(reservation)"
+                    [disabled]="!!busy()"
+                  >
+                    Confirmer le paiement
+                  </button>
+                }
+                @if (reservation.status !== "cancelled") {
+                  <button
+                    class="text-link danger-link"
+                    (click)="action(reservation, 'cancel')"
+                    [disabled]="!!busy()"
+                  >
+                    Annuler la réservation
+                  </button>
+                }
+              </div>
+            </article>
+          } @empty {
+            <div class="empty-state">
+              <h3>Aucun dossier pour ce filtre.</h3>
+              <p>Les nouvelles réservations apparaîtront ici.</p>
+            </div>
+          }
+        </div>
+      }
+    </div></app-admin-gate
+  >
 </section>
