@@ -1,6 +1,6 @@
 import { createServer } from 'node:http';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import handler from './handler';
+import handler from './handler.js';
 
 // Serveur de développement seulement ; Vercel exécute api/handler.ts en production.
 createServer(async (request, response) => {

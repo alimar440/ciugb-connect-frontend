@@ -5,7 +5,7 @@ import { randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import postgres from 'postgres';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import handler, { closeDatabaseConnection } from './handler';
+import handler, { closeDatabaseConnection } from './handler.js';
 
 const url = process.env['TEST_DATABASE_URL'];
 describe(

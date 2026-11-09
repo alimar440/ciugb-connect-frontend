@@ -7,14 +7,14 @@ import {
   randomUUID,
   timingSafeEqual,
 } from 'node:crypto';
-import { validateReservation } from '../src/app/core/reservation-rules';
+import { validateReservation } from '../src/app/core/reservation-rules.js';
 import type {
   AccessResult,
   Reservation,
   ReservationInput,
   ReservationStatus,
   Ticket,
-} from '../src/app/models/domain';
+} from '../src/app/models/domain.js';
 
 let connection: ReturnType<typeof postgres> | undefined;
 export async function closeDatabaseConnection(): Promise<void> {

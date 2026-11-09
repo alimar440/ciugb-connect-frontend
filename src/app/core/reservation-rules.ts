@@ -1,4 +1,4 @@
-import { AccessResult, Reservation, ReservationInput } from '../models/domain';
+import type { AccessResult, Reservation, ReservationInput } from '../models/domain.js';
 
 export function validateReservation(input: ReservationInput): ReservationInput {
   const fullName =
