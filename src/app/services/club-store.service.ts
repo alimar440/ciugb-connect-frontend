@@ -62,7 +62,7 @@ export class ClubStore {
     } catch (error) {
       if (['localhost', '127.0.0.1', '[::1]'].includes(location.hostname)) {
         this.mode.set('demo');
-        this.admin.set(true);
+        this.admin.set(false);
         try {
           const stored = JSON.parse(localStorage.getItem(DEMO_KEY) ?? 'null');
           this.orders.set(
@@ -256,9 +256,15 @@ export class ClubStore {
     this.myOrders.set(reservations);
   }
   async login(password: string): Promise<void> {
+    if (this.mode() === 'unavailable') {
+      this.startupError.set('');
+      this.mode.set('loading');
+      this.initialization = undefined;
+    }
     await this.initialize();
-    if (this.mode() === 'demo') return;
-    await this.request('/api/admin-session', { password });
+    if (this.mode() !== 'live') throw new Error('Le serveur de connexion n’est pas disponible. Aucun accès administrateur n’a été ouvert. Réessayez plus tard.');
+    const session = await this.request<{ authenticated: boolean }>('/api/admin-session', { password });
+    if (session.authenticated !== true) throw new Error('Connexion non autorisée. Vérifiez vos identifiants.');
     this.admin.set(true);
   }
   async logout(): Promise<void> {

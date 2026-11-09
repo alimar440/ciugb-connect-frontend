@@ -14,6 +14,8 @@ describe('Reservation lifecycle in local demonstration', () => {
     spyOn(window, 'fetch').and.rejectWith(new Error('Local demo'));
     store = new ClubStore();
     await store.initialize();
+    // Autorisation explicite du contexte de test ; aucun accès auto dans l’interface.
+    store.admin.set(true);
   });
   afterEach(() => {
     localStorage.removeItem('ciugb-reservations-demo-v2');
@@ -28,6 +30,12 @@ describe('Reservation lifecycle in local demonstration', () => {
     await expectAsync(
       store.authorizedTicket(r.reference, 'forged'),
     ).toBeRejected();
+  });
+  it('never authenticates an organizer with a local demo password', async () => {
+    store.admin.set(false);
+    await expectAsync(store.login('anything')).toBeRejected();
+    expect(store.admin()).toBeFalse();
+    await expectAsync(store.updateReservation('demo-pending', 'validate')).toBeRejected();
   });
   it('unlocks two separate tickets after manual validation only', async () => {
     const r = await store.reserve(input());

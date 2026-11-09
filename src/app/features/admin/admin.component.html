@@ -2,11 +2,8 @@
   <p class="eyebrow">ORGANISATEURS / 72H DU CLUB</p>
   <div class="section-heading">
     <div>
-      <h1>On prépare<br /><span class="text-red">la salle.</span></h1>
-      <p>
-        Contactez les participants et confirmez les paiements pour débloquer
-        leurs billets.
-      </p>
+      <h1>{{ store.admin() ? 'Gestion des réservations' : 'Espace administrateur' }}</h1>
+      <p>{{ store.admin() ? 'Contactez les participants et confirmez les paiements pour débloquer leurs billets.' : 'Accès réservé à l’équipe organisatrice des 72h du Club Informatique.' }}</p>
     </div>
     @if (store.admin()) {
       <a routerLink="/scan" class="button"

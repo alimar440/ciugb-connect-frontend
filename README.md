@@ -25,7 +25,7 @@ npm.cmd start
 
 Ouvrir http://localhost:4200. Sans API, **uniquement sur localhost**, une démonstration locale est activée et clairement signalée. Ses données sont conservées sous `ciugb-reservations-demo-v2`. Les codes des réservations consultées sont mémorisés sous `ciugb-reservation-references-v2`.
 
-Dans `/admin`, trois exemples fictifs permettent de tester une réservation en attente, un billet payé et un billet déjà utilisé. Le bouton « Confirmer le paiement » débloque réellement le justificatif dans cette démonstration, mais ne représente aucun encaissement réel.
+L’administration et le contrôle des billets exigent une connexion, y compris en local : la démonstration ne donne pas d’accès automatique organisateur. Pour tester ces opérations, démarrer l’API configurée décrite plus bas. Le formulaire de connexion reste visible si le serveur est indisponible ; aucune session n’est simulée par le frontend.
 
 **Sur Vercel, une API ou une base absente ne déclenche jamais une fausse réservation locale.** Le site indique que les réservations ne sont pas encore ouvertes.
 
@@ -104,6 +104,8 @@ Tests de parcours sur ordinateur et mobile (serveur Angular démarré sur 127.0.
 ```powershell
 npm.cmd run test:e2e -- --workers=2
 ```
+
+Les scénarios nécessitant une connexion organisateur exigent une API de test opérationnelle et la variable `E2E_ADMIN_PASSWORD`. Sans cette configuration, ils sont explicitement ignorés ; aucun accès automatique de démonstration n’est utilisé pour les faire passer.
 
 Tests d’intégration API : définir `TEST_DATABASE_URL` vers une **base de test dédiée dont le nom se termine par `_test`**, puis lancer `npm.cmd run test:api`. Les tables de test sont vidées entre les scénarios. Ne jamais utiliser une base de production. Sans cette variable, la suite d’intégration est explicitement ignorée.
 
