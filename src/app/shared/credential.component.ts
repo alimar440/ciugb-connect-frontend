@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { Component, inject, input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { Reservation } from '../models/domain';
@@ -44,12 +44,11 @@ import { STATUS_LABELS } from '../core/catalog';
           let i = $index
         ) {
           <div class="fun-ticket">
-            <div class="ticket-rip" aria-hidden="true"></div>
             <div class="fun-ticket-copy">
-              <span class="genre-label">THRILLER / 72H</span>
-              <p class="eyebrow">UNE PLACE DANS L’HISTOIRE</p>
-              <h3>Ne regardez<br />pas seul.</h3>
-              <p>{{ reservation().fullName }}</p>
+              <span class="genre-label">72H DU CLUB INFORMATIQUE</span>
+              <h3>Soirée cinéma</h3>
+              <p class="ticket-holder">{{ reservation().fullName }}</p>
+              <p class="ticket-location">Campus UGB, Saint-Louis<br />Date et salle à confirmer</p>
               <span class="ticket-admit"
                 >ENTRÉE {{ i + 1 }} / {{ reservation().quantity }}</span
               >
@@ -72,9 +71,7 @@ import { STATUS_LABELS } from '../core/catalog';
               </button>
             </div>
             <div class="ticket-qr-stub">
-              <app-qr [value]="ticket.id" /><span
-                >SCANNEZ. ENTREZ.<br />RETENEZ VOTRE SOUFFLE.</span
-              >
+              <app-qr [value]="ticket.id" /><span>À PRÉSENTER À L’ENTRÉE</span>
             </div>
           </div>
         }

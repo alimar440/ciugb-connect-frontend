@@ -8,7 +8,7 @@ import { IconComponent } from '../../shared/icon.component';
   template: ` <section class="section-shell page-intro">
       <p class="eyebrow">72H / SOIRÉE THRILLER</p>
       <h1>
-        Le suspense se vit<br /><span class="text-red">mieux ensemble.</span>
+        La soirée cinéma<br /><span class="text-red">des 72h du club.</span>
       </h1>
       <p>
         Retrouvez le Club Informatique de l’UGB pour une soirée cinéma sur le
@@ -19,18 +19,16 @@ import { IconComponent } from '../../shared/icon.component';
       <div>
         <div class="event-cover">
           <img
-            src="thriller-poster.svg"
-            alt="Une porte entrouverte dans un couloir, illustration de la soirée thriller"
+            src="cinema-poster.svg"
+            alt="Le campus fait son cinéma — affiche rouge des 72h du Club Informatique"
             width="720"
             height="880"
           />
         </div>
         <div class="event-details">
-          <h2>Un peu de mystère. Beaucoup d’ambiance.</h2>
+          <h2>Une projection sur le campus.</h2>
           <p>
-            Une projection, le plaisir de retrouver les amis et ce frisson qui
-            traverse toute la salle. Le film sera annoncé prochainement par le
-            club.
+            La soirée cinéma est organisée par le Club Informatique de l’UGB dans le cadre de ses 72h. Le film sera annoncé prochainement.
           </p>
           <div class="detail-row">
             <app-icon name="CalendarDays" />
@@ -59,7 +57,7 @@ import { IconComponent } from '../../shared/icon.component';
         </div>
       </div>
       <aside class="panel booking-panel tinted-offer">
-        <p class="eyebrow">VOTRE PLACE DANS L’HISTOIRE</p>
+        <p class="eyebrow">RÉSERVER UNE PLACE</p>
         <h2>Billet cinéma</h2>
         <div class="price">
           {{ store.event().ticketPrice }} <span>FCFA / personne</span>

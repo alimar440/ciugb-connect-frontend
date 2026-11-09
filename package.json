@@ -4,7 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "node scripts/build-api.mjs && ng build",
+    "postinstall": "node scripts/build-api.mjs",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "test:e2e": "playwright test",
@@ -44,6 +45,7 @@
     "@types/qrcode": "^1.5.6",
     "@vercel/node": "^30.0.0",
     "autoprefixer": "^10.6.2",
+    "esbuild": "^0.28.2",
     "jasmine-core": "~5.6.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",

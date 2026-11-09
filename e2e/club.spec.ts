@@ -31,7 +31,7 @@ test('thriller home, minimal form and both themes fit mobile and desktop', async
   page,
 }, info) => {
   await page.goto('/');
-  await expect(page.locator('h1')).toContainText('Le suspense');
+  await expect(page.locator('h1')).toContainText('Une soirée cinéma.');
   await expect(page.locator('main')).not.toContainText('Carte membre');
   await page.screenshot({
     path: `artifacts/thriller-home-${info.project.name}.png`,

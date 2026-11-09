@@ -31,7 +31,7 @@ Dans `/admin`, trois exemples fictifs permettent de tester une réservation en a
 
 ## Activer la base réelle sur Vercel
 
-Le backend est livré dans le même projet : `api/handler.ts` délègue à `server/handler.ts`. Il utilise PostgreSQL et ne nécessite aucun serveur à administrer séparément. Aucun compte ni base externe n’a été créé automatiquement.
+Le backend est livré dans le même projet : `server/handler.ts` est précompilé par `scripts/build-api.mjs` en un module Node autonome ; `api/handler.js` sert d’entrée Vercel. La précompilation est exécutée après l’installation et avant le build. Le backend utilise PostgreSQL et ne nécessite aucun serveur à administrer séparément. Aucun compte ni base externe n’a été créé automatiquement.
 
 1. Créer une base PostgreSQL dédiée auprès du fournisseur choisi (par exemple Neon via Vercel, ou PostgreSQL de Supabase). Préférer l’URL de connexion poolée du fournisseur et conserver ses paramètres TLS.
 2. Exécuter **[database/schema.sql](database/schema.sql)** dans l’éditeur SQL de cette base. Les tables portent le préfixe `ciugb_`. Le tarif et la capacité se configurent dans `ciugb_event` (valeurs initiales : 500 FCFA, 120 places).
@@ -70,7 +70,7 @@ Dans un second terminal :
 npm.cmd run dev:connected
 ```
 
-Le proxy Angular transmet `/api` vers le serveur local 127.0.0.1:3001. `server/dev.ts` est réservé au développement ; Vercel exécute `api/handler.ts`.
+Le proxy Angular transmet `/api` vers le serveur local 127.0.0.1:3001. `server/dev.ts` est réservé au développement ; Vercel exécute `api/handler.js`.
 
 ## API
 

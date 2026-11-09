@@ -2,7 +2,7 @@ import { createServer } from 'node:http';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import handler from './handler.js';
 
-// Serveur de développement seulement ; Vercel exécute api/handler.ts en production.
+// Serveur de développement seulement ; Vercel exécute api/handler.js en production.
 createServer(async (request, response) => {
   const chunks: Buffer[] = [];
   let size = 0;
