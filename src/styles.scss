@@ -2603,6 +2603,63 @@ td small {
   color: var(--text-secondary);
   text-align: center;
 }
+/* Night palette: a raised surface, a quieter stub and one clear action. */
+:root:not([data-theme="light"]) {
+  .cinema-ticket-offer {
+    background: #2c262b;
+    color: #f3e9df;
+    box-shadow: 0 0 0 1px #59464f, 0 16px 40px #0000002b;
+  }
+  .ticket-offer-masthead,
+  .ticket-offer-title {
+    border-color: #66525b;
+  }
+  .ticket-offer-title h2 {
+    color: #f3e9df;
+  }
+  .ticket-offer-date {
+    color: #e8bfc0;
+  }
+  .ticket-offer-club p span,
+  .ticket-offer-series,
+  .ticket-offer-date span,
+  .ticket-offer-digital {
+    color: #c3b5ba;
+  }
+  .ticket-offer-title p {
+    color: #e0d1c8;
+  }
+  .ticket-offer-title p span {
+    color: #a98a94;
+  }
+  .ticket-offer-stub {
+    background: #482b33;
+    color: #f3e9df;
+    border-left-color: #a57a8680;
+    border-top-color: #a57a8680;
+  }
+  .ticket-offer-person {
+    color: #d4b9c0;
+  }
+  .ticket-offer-stub .button {
+    background: #bd404c;
+    border-color: #bd404c;
+    color: #fff8f2;
+  }
+  .ticket-offer-stub .button:focus-visible {
+    outline-color: #edb9bc;
+  }
+  .ticket-offer-payment {
+    color: #bfaeb7;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .ticket-offer-stub .button:hover {
+      background: #cf4e5b;
+      border-color: #cf4e5b;
+      color: #fff8f2;
+    }
+  }
+}
 @media (max-width: 760px) {
   .cinema-ticket-offer {
     grid-template-columns: 1fr;
