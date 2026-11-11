@@ -632,9 +632,10 @@ small,
   overflow: hidden;
   white-space: nowrap;
 }
-.ticker-symbol {
+.ticker-separator {
   color: #d21f2b;
-  font-size: 1.7rem;
+  font-size: 1rem;
+  font-weight: 700;
   line-height: 1;
 }
 .offers-section {
