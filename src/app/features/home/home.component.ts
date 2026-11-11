@@ -1,10 +1,9 @@
 import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IconComponent } from '../../shared/icon.component';
-import { ScrollRevealDirective } from '../../shared/scroll-reveal.directive';
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, IconComponent, ScrollRevealDirective],
+  imports: [RouterLink, IconComponent],
   templateUrl: './home.component.html',
 })
 export class HomeComponent {
