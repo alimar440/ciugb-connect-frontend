@@ -94,43 +94,33 @@
       >
     </h2>
     <p>
-      Le film et les informations pratiques seront annoncés par le club. En
-      attendant, réservez votre place pour une projection à vivre ensemble.
+      Rendez-vous à UGB 2 pour une projection à vivre ensemble.
+      Réservez votre place, le club vous contacte pour le paiement.
     </p>
-    <a routerLink="/commander" class="text-link"
-      >Réserver ma place <app-icon name="ArrowUpRight"
-    /></a>
   </div>
-  <article class="cinema-ticket-offer">
-    <div class="ticket-offer-main">
-      <app-icon name="Ticket" [size]="32" /><span class="eyebrow"
-        >RÉSERVATION INDIVIDUELLE</span
-      >
-      <h3>Le billet cinéma</h3>
-      <div class="price">500 <span>FCFA / personne</span></div>
-      <ul class="benefits">
-        <li>
-          <app-icon name="Check" [size]="18" />Une entrée à la soirée cinéma des
-          72h
-        </li>
-        <li>
-          <app-icon name="Check" [size]="18" />Un QR individuel après confirmation
-          du paiement
-        </li>
-        <li>
-          <app-icon name="Check" [size]="18" />Votre billet à garder en PDF ou PNG
-        </li>
-      </ul>
-      <p class="small muted">
-        Pas de paiement en ligne. Le club vous contacte après la réservation.
-      </p>
-      <a routerLink="/commander" class="button full-width"
-        >Réserver mon billet <app-icon name="ArrowUpRight"
-      /></a>
+  <article class="ticket-offer" aria-labelledby="ticket-offer-title">
+    <div class="cinema-ticket-offer">
+      <div class="ticket-offer-main">
+        <p class="ticket-offer-brand">CLUB INFORMATIQUE <span>UGB</span></p>
+        <span class="ticket-offer-edition">LES 72H DU CLUB</span>
+        <h3 id="ticket-offer-title">Soirée<br />cinéma.</h3>
+        <div class="ticket-offer-details">
+          <p><strong>29 NOVEMBRE</strong><span>21h30</span></p>
+          <p><strong>UGB 2</strong><span>Saint-Louis</span></p>
+        </div>
+      </div>
+      <div class="ticket-offer-stub">
+        <span class="ticket-offer-admit">UNE ENTRÉE</span>
+        <div class="ticket-offer-price"><strong>500</strong><span>FCFA</span></div>
+        <span class="ticket-offer-person">par personne</span>
+        <app-icon name="Ticket" [size]="24" />
+      </div>
     </div>
-    <aside class="ticket-offer-stub" aria-label="Informations de la soirée">
-      <strong>72H</strong><span>29 NOV.</span><span>21H30</span><span>UGB 2</span>
-    </aside>
+    <p class="ticket-offer-includes">QR individuel · Billet en PDF ou PNG après validation du paiement.</p>
+    <div class="ticket-offer-booking">
+      <p>Vous réservez.<br /> Le club prend la suite.</p>
+      <a routerLink="/commander" class="button">Réserver mon billet <app-icon name="ArrowUpRight" [size]="18" /></a>
+    </div>
   </article>
 </section>
 <section class="how-section">

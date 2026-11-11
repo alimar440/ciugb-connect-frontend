@@ -2323,8 +2323,8 @@ td small {
 .hero-copy > .button-row,
 .hero-copy > .hero-meta,
 .thriller-art {
-  opacity: 0;
-  transform: translateY(16px);
+  opacity: 1;
+  transform: none;
   animation: home-enter 600ms var(--ease-out) forwards;
 }
 .hero-copy > .genre-label { animation-delay: 45ms; }
@@ -2334,6 +2334,7 @@ td small {
 .hero-copy > .hero-meta { animation-delay: 225ms; }
 .thriller-art { animation-delay: 120ms; }
 @keyframes home-enter {
+  from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
 }
 .thriller-hero h1 {
@@ -2429,58 +2430,175 @@ td small {
 .tinted-offer h3 {
   font-size: 1.8rem;
 }
+.ticket-offer {
+  width: 100%;
+  max-width: 580px;
+  min-width: 0;
+  justify-self: end;
+}
 .cinema-ticket-offer {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 108px;
+  grid-template-columns: minmax(0, 1fr) 130px;
   overflow: hidden;
-  background: #302133;
-  border: 1px solid #72506b;
-  border-radius: 10px;
+  border-radius: 7px;
+  background: #f1e4cd;
+  color: #29221e;
+  box-shadow: 0 3px 0 #bda98b, 0 12px 25px #00000012;
 }
 .ticket-offer-main {
   min-width: 0;
-  padding: 34px;
+  padding: 24px 28px 26px;
 }
-.ticket-offer-main > app-icon {
-  color: #e7b180;
-  margin-bottom: 20px;
+.ticket-offer-brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 28px;
+  font-size: 0.65rem;
+  font-weight: 750;
+  letter-spacing: 0.09em;
 }
-.ticket-offer-main > .eyebrow {
-  display: block;
-  margin-bottom: 12px;
+.ticket-offer-brand span {
+  color: #8f242b;
+}
+.ticket-offer-edition {
+  font: 600 0.59rem/1.4 "Courier New", monospace;
+  letter-spacing: 0.13em;
+  color: #7c3f31;
 }
 .ticket-offer-main h3 {
-  font-size: 1.8rem;
+  margin: 10px 0 26px;
+  font-size: clamp(2rem, 3.2vw, 2.9rem);
+  font-weight: 800;
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+}
+.ticket-offer-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+  border-top: 1px solid #cab99c;
+  padding-top: 16px;
+}
+.ticket-offer-details p {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  font-size: 0.7rem;
+  line-height: 1.2;
+}
+.ticket-offer-details strong {
+  font-size: 0.65rem;
+  letter-spacing: 0.04em;
+}
+.ticket-offer-details span {
+  color: #655548;
 }
 .ticket-offer-stub {
   position: relative;
-  display: grid;
-  align-content: center;
-  justify-items: center;
-  gap: 17px;
-  padding: 24px 8px;
-  border-left: 1px dashed #8d6d86;
-  background: rgb(20 13 21 / 22%);
-  color: #e7b180;
-  font: 700 0.65rem/1 monospace;
-  letter-spacing: 0.08em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 12px;
+  border-left: 1px dashed #d6b3a0;
+  background: #8f242b;
+  color: #f9ecd6;
 }
 .ticket-offer-stub::before,
 .ticket-offer-stub::after {
   content: '';
   position: absolute;
-  left: -11px;
-  width: 20px;
-  height: 20px;
-  border: 1px solid #72506b;
+  left: -10px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: var(--ink);
+  pointer-events: none;
 }
-.ticket-offer-stub::before { top: -11px; }
-.ticket-offer-stub::after { bottom: -11px; }
-.ticket-offer-stub strong {
-  font-size: 1.5rem;
-  letter-spacing: -0.08em;
+.ticket-offer-stub::before { top: -9px; }
+.ticket-offer-stub::after { bottom: -9px; }
+.ticket-offer-admit {
+  font: 600 0.58rem/1.4 "Courier New", monospace;
+  letter-spacing: 0.11em;
+}
+.ticket-offer-price {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  margin-top: 24px;
+}
+.ticket-offer-price strong {
+  font-size: 2.8rem;
+  line-height: 1;
+  letter-spacing: -0.07em;
+}
+.ticket-offer-price span {
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+}
+.ticket-offer-person {
+  margin-top: 7px;
+  font-size: 0.62rem;
+  color: #e7c5b0;
+}
+.ticket-offer-stub app-icon {
+  margin-top: 30px;
+  color: #e7c5b0;
+}
+.ticket-offer-includes {
+  margin: 20px 0 18px;
+  font-size: 0.72rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+.ticket-offer-booking {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.ticket-offer-booking p {
+  margin: 0;
+  font-size: 0.76rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+.ticket-offer-booking .button {
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+@media (max-width: 420px) {
+  .cinema-ticket-offer {
+    grid-template-columns: minmax(0, 1fr) 96px;
+  }
+  .ticket-offer-main {
+    padding: 22px 20px;
+  }
+  .ticket-offer-brand {
+    gap: 8px;
+    font-size: 0.56rem;
+  }
+  .ticket-offer-main h3 {
+    font-size: 2.15rem;
+  }
+  .ticket-offer-stub {
+    padding-inline: 8px;
+  }
+  .ticket-offer-price strong {
+    font-size: 2.4rem;
+  }
+  .ticket-offer-booking {
+    flex-wrap: wrap;
+  }
+  .ticket-offer-booking p br {
+    display: none;
+  }
+  .ticket-offer-booking .button {
+    width: 100%;
+  }
 }
 .reservation-steps {
   display: grid;
@@ -2753,20 +2871,6 @@ td small {
   background: #f5e5ed;
   border-color: #cc9fb6;
 }
-:root[data-theme="light"] .cinema-ticket-offer {
-  background: #f5e5ed;
-  border-color: #cc9fb6;
-}
-:root[data-theme="light"] .ticket-offer-stub {
-  border-color: #d4a1b9;
-  background: rgb(211 145 170 / 12%);
-  color: #952c46;
-}
-:root[data-theme="light"] .ticket-offer-stub::before,
-:root[data-theme="light"] .ticket-offer-stub::after {
-  border-color: #cc9fb6;
-  background: var(--ink);
-}
 :root[data-theme="light"] .reservation-summary-art {
   color: #8c3b59;
 }
@@ -2783,6 +2887,11 @@ td small {
   }
   .suspense-section {
     gap: 35px;
+    grid-template-columns: 1fr;
+  }
+  .ticket-offer {
+    max-width: 580px;
+    justify-self: center;
   }
   .admin-booking {
     grid-template-columns: 1fr 1fr;
@@ -2819,29 +2928,6 @@ td small {
   }
   .tinted-offer {
     padding: 26px;
-  }
-  .cinema-ticket-offer {
-    grid-template-columns: 1fr;
-  }
-  .ticket-offer-main {
-    padding: 26px;
-  }
-  .ticket-offer-stub {
-    grid-template-columns: repeat(4, 1fr);
-    align-items: center;
-    padding: 17px 18px;
-    border-top: 1px dashed #8d6d86;
-    border-left: 0;
-  }
-  .ticket-offer-stub::before,
-  .ticket-offer-stub::after {
-    top: -11px;
-    bottom: auto;
-  }
-  .ticket-offer-stub::before { left: -11px; }
-  .ticket-offer-stub::after { right: -11px; left: auto; }
-  .ticket-offer-stub strong {
-    font-size: 1.05rem;
   }
   .reservation-steps {
     grid-template-columns: 1fr 1fr;
