@@ -657,21 +657,6 @@ small,
   color: var(--text-secondary);
   max-width: 370px;
 }
-.trailer-booking {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 16px;
-  margin-top: 24px;
-}
-.trailer-booking > span {
-  font-size: 0.82rem;
-  color: var(--text-secondary);
-}
-.trailer-booking strong {
-  color: var(--paper);
-  font-size: 1.05rem;
-}
 .trailer-preview {
   appearance: none;
   position: relative;
@@ -2444,6 +2429,59 @@ td small {
 .tinted-offer h3 {
   font-size: 1.8rem;
 }
+.cinema-ticket-offer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 108px;
+  overflow: hidden;
+  background: #302133;
+  border: 1px solid #72506b;
+  border-radius: 10px;
+}
+.ticket-offer-main {
+  min-width: 0;
+  padding: 34px;
+}
+.ticket-offer-main > app-icon {
+  color: #e7b180;
+  margin-bottom: 20px;
+}
+.ticket-offer-main > .eyebrow {
+  display: block;
+  margin-bottom: 12px;
+}
+.ticket-offer-main h3 {
+  font-size: 1.8rem;
+}
+.ticket-offer-stub {
+  position: relative;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 17px;
+  padding: 24px 8px;
+  border-left: 1px dashed #8d6d86;
+  background: rgb(20 13 21 / 22%);
+  color: #e7b180;
+  font: 700 0.65rem/1 monospace;
+  letter-spacing: 0.08em;
+}
+.ticket-offer-stub::before,
+.ticket-offer-stub::after {
+  content: '';
+  position: absolute;
+  left: -11px;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #72506b;
+  border-radius: 50%;
+  background: var(--ink);
+}
+.ticket-offer-stub::before { top: -11px; }
+.ticket-offer-stub::after { bottom: -11px; }
+.ticket-offer-stub strong {
+  font-size: 1.5rem;
+  letter-spacing: -0.08em;
+}
 .reservation-steps {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -2715,6 +2753,20 @@ td small {
   background: #f5e5ed;
   border-color: #cc9fb6;
 }
+:root[data-theme="light"] .cinema-ticket-offer {
+  background: #f5e5ed;
+  border-color: #cc9fb6;
+}
+:root[data-theme="light"] .ticket-offer-stub {
+  border-color: #d4a1b9;
+  background: rgb(211 145 170 / 12%);
+  color: #952c46;
+}
+:root[data-theme="light"] .ticket-offer-stub::before,
+:root[data-theme="light"] .ticket-offer-stub::after {
+  border-color: #cc9fb6;
+  background: var(--ink);
+}
 :root[data-theme="light"] .reservation-summary-art {
   color: #8c3b59;
 }
@@ -2767,6 +2819,29 @@ td small {
   }
   .tinted-offer {
     padding: 26px;
+  }
+  .cinema-ticket-offer {
+    grid-template-columns: 1fr;
+  }
+  .ticket-offer-main {
+    padding: 26px;
+  }
+  .ticket-offer-stub {
+    grid-template-columns: repeat(4, 1fr);
+    align-items: center;
+    padding: 17px 18px;
+    border-top: 1px dashed #8d6d86;
+    border-left: 0;
+  }
+  .ticket-offer-stub::before,
+  .ticket-offer-stub::after {
+    top: -11px;
+    bottom: auto;
+  }
+  .ticket-offer-stub::before { left: -11px; }
+  .ticket-offer-stub::after { right: -11px; left: auto; }
+  .ticket-offer-stub strong {
+    font-size: 1.05rem;
   }
   .reservation-steps {
     grid-template-columns: 1fr 1fr;

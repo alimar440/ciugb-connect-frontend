@@ -47,12 +47,6 @@
       Découvrez l’univers de la soirée avant de réserver votre place pour le
       29 novembre à 21h30, à UGB 2.
     </p>
-    <div class="trailer-booking">
-      <span><strong>500 FCFA</strong> / place</span>
-      <a routerLink="/commander" class="button button-small"
-        >Réserver ma place <app-icon name="ArrowUpRight" [size]="16" />
-      </a>
-    </div>
   </div>
   <button
     class="trailer-preview"
@@ -107,31 +101,36 @@
       >Réserver ma place <app-icon name="ArrowUpRight"
     /></a>
   </div>
-  <article class="tinted-offer">
-    <app-icon name="Ticket" [size]="32" /><span class="eyebrow"
-      >RÉSERVATION INDIVIDUELLE</span
-    >
-    <h3>Le billet cinéma</h3>
-    <div class="price">500 <span>FCFA / personne</span></div>
-    <ul class="benefits">
-      <li>
-        <app-icon name="Check" [size]="18" />Une entrée à la soirée cinéma des
-        72h
-      </li>
-      <li>
-        <app-icon name="Check" [size]="18" />Un QR individuel après confirmation
-        du paiement
-      </li>
-      <li>
-        <app-icon name="Check" [size]="18" />Votre billet à garder en PDF ou PNG
-      </li>
-    </ul>
-    <p class="small muted">
-      Pas de paiement en ligne. Le club vous contacte après la réservation.
-    </p>
-    <a routerLink="/commander" class="button full-width"
-      >Réserver mon billet <app-icon name="ArrowUpRight"
-    /></a>
+  <article class="cinema-ticket-offer">
+    <div class="ticket-offer-main">
+      <app-icon name="Ticket" [size]="32" /><span class="eyebrow"
+        >RÉSERVATION INDIVIDUELLE</span
+      >
+      <h3>Le billet cinéma</h3>
+      <div class="price">500 <span>FCFA / personne</span></div>
+      <ul class="benefits">
+        <li>
+          <app-icon name="Check" [size]="18" />Une entrée à la soirée cinéma des
+          72h
+        </li>
+        <li>
+          <app-icon name="Check" [size]="18" />Un QR individuel après confirmation
+          du paiement
+        </li>
+        <li>
+          <app-icon name="Check" [size]="18" />Votre billet à garder en PDF ou PNG
+        </li>
+      </ul>
+      <p class="small muted">
+        Pas de paiement en ligne. Le club vous contacte après la réservation.
+      </p>
+      <a routerLink="/commander" class="button full-width"
+        >Réserver mon billet <app-icon name="ArrowUpRight"
+      /></a>
+    </div>
+    <aside class="ticket-offer-stub" aria-label="Informations de la soirée">
+      <strong>72H</strong><span>29 NOV.</span><span>21H30</span><span>UGB 2</span>
+    </aside>
   </article>
 </section>
 <section class="how-section">
