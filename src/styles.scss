@@ -30,6 +30,8 @@
 }
 
 :root {
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
   --red: #a51018;
   --bright-red: #d21f2b;
   --ink: #101010;
@@ -444,6 +446,9 @@ small,
   color: #fff;
   font-size: 0.9rem;
 }
+.text-link app-icon {
+  transition: transform 160ms var(--ease-out);
+}
 .skip-link {
   position: fixed;
   z-index: 20;
@@ -719,11 +724,21 @@ small,
   place-items: center;
   padding: 24px;
   background: rgb(7 5 7 / 90%);
+  animation: trailer-backdrop-in 250ms var(--ease-out) both;
 }
 .trailer-modal-player {
   width: min(100%, 1000px);
   aspect-ratio: 16 / 9;
   box-shadow: 0 24px 80px rgb(0 0 0 / 55%);
+  animation: trailer-modal-in 250ms var(--ease-out) both;
+}
+@keyframes trailer-backdrop-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes trailer-modal-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
 }
 .trailer-modal-player iframe {
   display: block;
@@ -1832,6 +1847,9 @@ td small {
   }
 }
 @media (hover: hover) and (pointer: fine) {
+  .text-link:hover app-icon {
+    transform: translateX(3px);
+  }
   .button:hover:not(:disabled) {
     background: var(--bright-red);
     border-color: var(--bright-red);
@@ -2297,6 +2315,33 @@ td small {
   gap: 65px;
   align-items: center;
   padding-block: 65px 85px;
+}
+.hero-copy > .eyebrow,
+.hero-copy > .genre-label,
+.hero-copy > h1,
+.hero-copy > .hero-description,
+.hero-copy > .button-row,
+.hero-copy > .hero-meta,
+.thriller-art {
+  opacity: 0;
+  transform: translateY(16px);
+  animation: home-enter 600ms var(--ease-out) forwards;
+}
+.hero-copy > .genre-label { animation-delay: 45ms; }
+.hero-copy > h1 { animation-delay: 90ms; }
+.hero-copy > .hero-description { animation-delay: 135ms; }
+.hero-copy > .button-row { animation-delay: 180ms; }
+.hero-copy > .hero-meta { animation-delay: 225ms; }
+.thriller-art { animation-delay: 120ms; }
+@keyframes home-enter {
+  to { opacity: 1; transform: translateY(0); }
+}
+.scroll-reveal {
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path 600ms var(--ease-in-out);
+}
+.scroll-reveal[data-visible] {
+  clip-path: inset(0 0 0 0);
 }
 .thriller-hero h1 {
   font-size: clamp(3.7rem, 5.9vw, 5.4rem);
