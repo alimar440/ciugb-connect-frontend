@@ -31,6 +31,8 @@ L’administration et le contrôle des billets exigent une connexion, y compris 
 
 ## Activer la base réelle sur Vercel
 
+Le frontend de production est relié à `https://backend-ciugb-cinema.onrender.com/api`. Les réservations, la consultation, la connexion organisateur et le scan passent directement par ce service Render avec les cookies de session (`credentials: 'include'`). Le backend autorise le domaine Vercel du projet par CORS.
+
 Le backend est livré dans le même projet : `server/handler.ts` est précompilé par `scripts/build-api.mjs` en un module Node autonome ; `api/handler.js` sert d’entrée Vercel. La précompilation est exécutée après l’installation et avant le build. Le backend utilise PostgreSQL et ne nécessite aucun serveur à administrer séparément. Aucun compte ni base externe n’a été créé automatiquement.
 
 1. Créer une base PostgreSQL dédiée auprès du fournisseur choisi (par exemple Neon via Vercel, ou PostgreSQL de Supabase). Préférer l’URL de connexion poolée du fournisseur et conserver ses paramètres TLS.

@@ -9,6 +9,7 @@ import {
 import { CINEMA } from '../core/catalog';
 import { createDemoReservations } from '../core/demo-data';
 import { inspectAccess, validateReservation } from '../core/reservation-rules';
+import { apiUrl } from '../core/api';
 
 const DEMO_KEY = 'ciugb-reservations-demo-v2';
 const REFERENCES_KEY = 'ciugb-reservation-references-v2';
@@ -142,9 +143,9 @@ export class ClubStore {
     body?: unknown,
     method = body === undefined ? 'GET' : 'POST',
   ): Promise<T> {
-    const response = await fetch(url, {
+    const response = await fetch(apiUrl(url), {
       method,
-      credentials: 'same-origin',
+      credentials: 'include',
       cache: 'no-store',
       headers: body === undefined ? {} : { 'Content-Type': 'application/json' },
       ...(body === undefined ? {} : { body: JSON.stringify(body) }),
