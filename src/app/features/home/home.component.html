@@ -48,16 +48,43 @@
       29 novembre à 21h30, à UGB 2.
     </p>
   </div>
-  <div class="trailer-player">
-    <iframe
-      src="https://www.youtube-nocookie.com/embed/-jadQJRCWqQ"
-      title="Bande-annonce de la soirée cinéma des 72h"
-      loading="lazy"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-      allowfullscreen
-    ></iframe>
-  </div>
+  <button
+    class="trailer-preview"
+    type="button"
+    (click)="trailerOpen.set(true)"
+    aria-label="Lire la bande-annonce de la soirée cinéma"
+  >
+    <span class="trailer-scrim"></span>
+    <span class="trailer-play" aria-hidden="true"><span></span></span>
+    <span class="trailer-preview-label">Lire la bande-annonce</span>
+  </button>
 </section>
+@if (trailerOpen()) {
+  <div
+    class="trailer-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Bande-annonce de la soirée cinéma"
+    (keydown.escape)="trailerOpen.set(false)"
+  >
+    <button
+      type="button"
+      class="trailer-close"
+      (click)="trailerOpen.set(false)"
+      aria-label="Fermer la bande-annonce"
+    >
+      ×
+    </button>
+    <div class="trailer-modal-player">
+      <iframe
+        src="https://www.youtube-nocookie.com/embed/-jadQJRCWqQ?autoplay=1"
+        title="Bande-annonce de la soirée cinéma des 72h"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+      ></iframe>
+    </div>
+  </div>
+}
 <section class="section-shell suspense-section">
   <div>
     <p class="eyebrow">LA SOIRÉE DES 72H</p>

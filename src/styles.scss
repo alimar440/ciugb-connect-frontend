@@ -652,6 +652,104 @@ small,
   color: var(--text-secondary);
   max-width: 370px;
 }
+.trailer-preview {
+  appearance: none;
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  background:
+    url('https://i.ytimg.com/vi/-jadQJRCWqQ/hqdefault.jpg') center / cover,
+    #090709;
+  box-shadow: 14px 14px 0 color-mix(in srgb, var(--red) 35%, transparent);
+}
+.trailer-preview:hover .trailer-play,
+.trailer-preview:focus-visible .trailer-play {
+  transform: scale(1.08);
+  background: var(--red);
+}
+.trailer-preview:focus-visible {
+  outline: 3px solid var(--red);
+  outline-offset: 4px;
+}
+.trailer-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgb(11 9 12 / 72%), rgb(11 9 12 / 14%));
+}
+.trailer-play {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border: 1px solid rgb(255 255 255 / 80%);
+  border-radius: 50%;
+  background: rgb(18 13 15 / 80%);
+  transition: transform 160ms ease, background 160ms ease;
+}
+.trailer-play span {
+  width: 0;
+  height: 0;
+  margin-left: 5px;
+  border-top: 11px solid transparent;
+  border-bottom: 11px solid transparent;
+  border-left: 17px solid #fff;
+}
+.trailer-preview-label {
+  position: absolute;
+  bottom: 23px;
+  left: 26px;
+  font: 700 0.72rem/1 monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.trailer-modal {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgb(7 5 7 / 90%);
+}
+.trailer-modal-player {
+  width: min(100%, 1000px);
+  aspect-ratio: 16 / 9;
+  box-shadow: 0 24px 80px rgb(0 0 0 / 55%);
+}
+.trailer-modal-player iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.trailer-close {
+  position: fixed;
+  top: 20px;
+  right: 24px;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgb(255 255 255 / 40%);
+  border-radius: 50%;
+  color: #fff;
+  background: rgb(0 0 0 / 45%);
+  font-size: 1.9rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.trailer-close:hover,
+.trailer-close:focus-visible {
+  border-color: var(--red);
+  background: var(--red);
+}
 .trailer-player {
   overflow: hidden;
   aspect-ratio: 16 / 9;

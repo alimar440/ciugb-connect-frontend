@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IconComponent } from '../../shared/icon.component';
 @Component({
@@ -7,6 +7,7 @@ import { IconComponent } from '../../shared/icon.component';
   templateUrl: './home.component.html',
 })
 export class HomeComponent {
+  readonly trailerOpen = signal(false);
   readonly steps = [
     {
       title: 'Vous réservez.',
