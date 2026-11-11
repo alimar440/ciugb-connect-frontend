@@ -1,9 +1,10 @@
 import { Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IconComponent } from '../../shared/icon.component';
+import { ClubLogoComponent } from '../../shared/club-logo.component';
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, IconComponent],
+  imports: [RouterLink, IconComponent, ClubLogoComponent],
   templateUrl: './home.component.html',
 })
 export class HomeComponent {
