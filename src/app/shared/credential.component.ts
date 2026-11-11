@@ -48,7 +48,7 @@ import { STATUS_LABELS } from '../core/catalog';
               <span class="genre-label">72H DU CLUB INFORMATIQUE</span>
               <h3>Soirée cinéma</h3>
               <p class="ticket-holder">{{ reservation().fullName }}</p>
-              <p class="ticket-location">Campus UGB, Saint-Louis<br />Date et salle à confirmer</p>
+              <p class="ticket-location">UGB 2 · Université Gaston Berger<br />29 novembre · 21h30</p>
               <span class="ticket-admit"
                 >ENTRÉE {{ i + 1 }} / {{ reservation().quantity }}</span
               >

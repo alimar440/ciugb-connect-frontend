@@ -9,9 +9,8 @@ export const routes: Routes = [
   },
   {
     path: 'cinema',
-    title: 'Soirée cinéma · CIUGB Connect',
-    loadComponent: () =>
-      import('./features/events/event.component').then((m) => m.EventComponent),
+    redirectTo: '',
+    pathMatch: 'full',
   },
   {
     path: 'adhesion',

@@ -1,8 +1,8 @@
 import { EventConfig } from '../models/domain';
 export const CINEMA: EventConfig = {
-  name: 'Soirée thriller des 72h',
-  dateLabel: 'Date et horaire à confirmer',
-  location: 'Campus UGB, Saint-Louis · salle à confirmer',
+  name: 'Soirée cinéma des 72h',
+  dateLabel: '29 novembre · 21h30',
+  location: 'UGB 2 · Université Gaston Berger',
   ticketPrice: 500,
   capacity: 120,
   remaining: 120,

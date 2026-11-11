@@ -37,7 +37,7 @@ export function credentialArtwork(reservation: Reservation, credentialId: string
 <text x="146" y="74" fill="#faf3ee" font-size="18" font-weight="700" letter-spacing=".7">CLUB INFORMATIQUE</text><text x="146" y="101" fill="#baa6ac" font-size="12">Université Gaston Berger · Saint-Louis</text>
 <text x="52" y="185" fill="#edb4bc" font-family="monospace" font-size="13" letter-spacing="1.4">LES 72H DU CLUB</text>
 <text x="49" y="248" fill="#faf3ee" font-size="50" font-weight="650" letter-spacing="-1.5">Soirée cinéma</text>
-<text x="52" y="285" fill="#baa6ac" font-size="16">Campus UGB · Date et salle à confirmer</text>
+<text x="52" y="285" fill="#baa6ac" font-size="16">UGB 2 · 29 novembre · 21h30</text>
 <text x="52" y="346" fill="#baa6ac" font-size="11" letter-spacing="1">NOM DU PARTICIPANT</text>${name}
 <text x="52" y="504" fill="#edb4bc" font-family="monospace" font-size="21">${xml(ticket.code)}</text>
 <text x="52" y="540" fill="#baa6ac" font-size="14">Paiement confirmé · Entrée individuelle</text>

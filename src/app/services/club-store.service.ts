@@ -49,7 +49,14 @@ export class ClubStore {
         configured: boolean;
         event: EventConfig;
       }>('/api/config');
-      this.event.set(config.event);
+      // Date and venue have been announced by the club. Keep price, capacity
+      // and remaining places supplied live by the reservation API.
+      this.event.set({
+        ...config.event,
+        name: CINEMA.name,
+        dateLabel: CINEMA.dateLabel,
+        location: CINEMA.location,
+      });
       if (!config.configured)
         throw new Error(
           'Les réservations ne sont pas encore ouvertes. Réessayez plus tard ou contactez le club.',
