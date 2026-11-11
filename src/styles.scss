@@ -657,6 +657,21 @@ small,
   color: var(--text-secondary);
   max-width: 370px;
 }
+.trailer-booking {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+}
+.trailer-booking > span {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+.trailer-booking strong {
+  color: var(--paper);
+  font-size: 1.05rem;
+}
 .trailer-preview {
   appearance: none;
   position: relative;
