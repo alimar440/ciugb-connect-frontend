@@ -3,7 +3,7 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    title: 'CIUGB Connect · Les 72h du Club Informatique',
+    title: 'CIUGB Connect · Weekend Tech',
     loadComponent: () =>
       import('./features/home/home.component').then((m) => m.HomeComponent),
   },

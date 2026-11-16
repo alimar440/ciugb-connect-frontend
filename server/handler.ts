@@ -237,7 +237,7 @@ export default async function handler(
         .json({
           configured: configured(),
           event: {
-            name: 'Soirée thriller des 72h',
+            name: 'Soirée thriller du Weekend Tech',
             dateLabel: 'Date et horaire à confirmer',
             location: 'Campus UGB, Saint-Louis · salle à confirmer',
             ticketPrice: price,

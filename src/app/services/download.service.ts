@@ -68,7 +68,7 @@ export class DownloadService {
       compress: true,
     });
     pdf.setProperties({
-      title: 'Billet thriller · 72h du Club Informatique',
+      title: 'Billet thriller · Weekend Tech',
       author: 'Club Informatique UGB',
     });
     pdf.addImage(canvas, 'PNG', 0, 0, 104, 65, undefined, 'FAST');

@@ -6,9 +6,9 @@ import { IconComponent } from '../../shared/icon.component';
   selector: 'app-event',
   imports: [RouterLink, IconComponent],
   template: ` <section class="section-shell page-intro">
-      <p class="eyebrow">72H / SOIRÉE THRILLER</p>
+      <p class="eyebrow">WEEKEND TECH / SOIRÉE THRILLER</p>
       <h1>
-        La soirée cinéma<br /><span class="text-red">des 72h du club.</span>
+        La soirée cinéma<br /><span class="text-red">du Weekend Tech.</span>
       </h1>
       <p>
         Retrouvez le Club Informatique de l’UGB pour une soirée cinéma sur le
@@ -20,7 +20,7 @@ import { IconComponent } from '../../shared/icon.component';
         <div class="event-cover">
           <img
             src="cinema-poster.svg"
-            alt="Le campus fait son cinéma — affiche rouge des 72h du Club Informatique"
+            alt="Le campus fait son cinéma — affiche du Weekend Tech du Club Informatique"
             width="720"
             height="880"
           />
@@ -28,7 +28,7 @@ import { IconComponent } from '../../shared/icon.component';
         <div class="event-details">
           <h2>Une projection sur le campus.</h2>
           <p>
-            La soirée cinéma est organisée par le Club Informatique de l’UGB dans le cadre de ses 72h. Le film sera annoncé prochainement.
+            La soirée cinéma est organisée par le Club Informatique de l’UGB dans le cadre du Weekend Tech. Le film sera annoncé prochainement.
           </p>
           <div class="detail-row">
             <app-icon name="CalendarDays" />

@@ -7,7 +7,7 @@ import { ClubStore } from '../services/club-store.service';
   template: `
     @if (!store.admin()) {
       <section class="panel admin-login">
-        <p class="eyebrow">RÉSERVÉ À L’ÉQUIPE DES 72H</p>
+        <p class="eyebrow">RÉSERVÉ À L’ÉQUIPE DU WEEKEND TECH</p>
         <h2>Connexion administrateur</h2>
         <p class="small muted">Cet espace est réservé à l’équipe du Club Informatique. Connectez-vous pour gérer les réservations et contrôler les billets.</p>
         <form (ngSubmit)="login()">

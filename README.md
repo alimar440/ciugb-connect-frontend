@@ -1,4 +1,4 @@
-# CIUGB Connect · Soirée thriller des 72h
+# CIUGB Connect · Soirée cinéma du Weekend Tech
 
 Billetterie du Club Informatique de l’Université Gaston Berger. Angular 19 standalone, TypeScript strict, Tailwind/SCSS, thèmes clair et sombre, logos originaux du club, QR caméra/image/code et exports PDF/PNG/SVG.
 

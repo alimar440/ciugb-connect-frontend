@@ -1,9 +1,9 @@
 <section class="section-shell page-intro compact">
-  <p class="eyebrow">ORGANISATEURS / 72H DU CLUB</p>
+  <p class="eyebrow">ORGANISATEURS / WEEKEND TECH</p>
   <div class="section-heading">
     <div>
       <h1>{{ store.admin() ? 'Gestion des réservations' : 'Espace administrateur' }}</h1>
-      <p>{{ store.admin() ? 'Contactez les participants et confirmez les paiements pour débloquer leurs billets.' : 'Accès réservé à l’équipe organisatrice des 72h du Club Informatique.' }}</p>
+      <p>{{ store.admin() ? 'Contactez les participants et confirmez les paiements pour débloquer leurs billets.' : 'Accès réservé à l’équipe organisatrice du Weekend Tech.' }}</p>
     </div>
     @if (store.admin()) {
       <a routerLink="/scan" class="button"
@@ -70,7 +70,7 @@
     <div class="panel purchases-panel">
       <div class="section-heading">
         <div>
-          <p class="eyebrow">LE REGISTRE DES 72H</p>
+          <p class="eyebrow">LE REGISTRE DU WEEKEND TECH</p>
           <h2>Réservations</h2>
         </div>
         <span class="small muted">{{ filtered().length }} dossier(s)</span>

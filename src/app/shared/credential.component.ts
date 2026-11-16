@@ -14,7 +14,7 @@ import { STATUS_LABELS } from '../core/catalog';
     <article class="credential-block reservation-card">
       <div class="reservation-card-heading">
         <div>
-          <p class="eyebrow">SOIRÉE THRILLER · 72H UGB</p>
+          <p class="eyebrow">SOIRÉE THRILLER · WEEKEND TECH</p>
           <h3>{{ reservation().fullName }}</h3>
         </div>
         <span
@@ -45,7 +45,7 @@ import { STATUS_LABELS } from '../core/catalog';
         ) {
           <div class="fun-ticket">
             <div class="fun-ticket-copy">
-              <span class="genre-label">72H DU CLUB INFORMATIQUE</span>
+              <span class="genre-label">WEEKEND TECH · CLUB INFORMATIQUE</span>
               <h3>Soirée cinéma</h3>
               <p class="ticket-holder">{{ reservation().fullName }}</p>
               <p class="ticket-location">UGB 2 · Université Gaston Berger<br />29 novembre · 21h30</p>

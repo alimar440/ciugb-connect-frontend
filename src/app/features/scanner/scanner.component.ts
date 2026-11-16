@@ -57,7 +57,7 @@ export class ScannerComponent {
     this.error.set('');
     try {
       this.result.set(await this.store.checkIn(this.checkedCode));
-      this.store.notify('Entrée enregistrée pour la soirée des 72h.');
+      this.store.notify('Entrée enregistrée pour la soirée du Weekend Tech.');
     } catch (error) {
       this.error.set(
         error instanceof Error ? error.message : 'Validation impossible.',

@@ -2,7 +2,7 @@
 
 **Document de passation — 9 novembre 2026**
 
-Ce document décrit le backend à réaliser pour la billetterie de la soirée cinéma des 72h du Club Informatique de l’Université Gaston Berger, à Saint-Louis. Il peut être transmis directement à la personne chargée du développement backend.
+Ce document décrit le backend à réaliser pour la billetterie de la soirée cinéma du Weekend Tech, organisée par le Club Informatique de l’Université Gaston Berger, à Saint-Louis. Il peut être transmis directement à la personne chargée du développement backend.
 
 ## 1. Projet et état actuel
 
@@ -65,7 +65,7 @@ Nom complet + téléphone + quantité
 
 ### Périmètre à respecter
 
-- Uniquement la soirée cinéma des **72h du Club Informatique**.
+- Uniquement la soirée cinéma du **Weekend Tech du Club Informatique**.
 - **Aucune carte membre, aucune adhésion annuelle.**
 - **Aucune API de paiement**, aucun paiement automatique sur le site.
 - Pas de demande de PIN, OTP ou données bancaires.
@@ -295,7 +295,7 @@ Décrit l’ouverture des réservations et la soirée.
 {
   "configured": true,
   "event": {
-    "name": "Soirée cinéma des 72h",
+    "name": "Soirée cinéma du Weekend Tech",
     "dateLabel": "Date et horaire à confirmer",
     "location": "Campus UGB, Saint-Louis · salle à confirmer",
     "ticketPrice": 500,

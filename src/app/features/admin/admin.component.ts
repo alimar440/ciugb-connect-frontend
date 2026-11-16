@@ -70,7 +70,7 @@ export class AdminComponent {
       value: this.store
         .orders()
         .reduce((n, r) => n + r.tickets.filter((t) => t.checkedInAt).length, 0),
-      suffix: 'soirée des 72h',
+      suffix: 'soirée du Weekend Tech',
       icon: 'Users' as const,
     },
   ]);

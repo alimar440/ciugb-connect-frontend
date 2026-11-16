@@ -24,7 +24,7 @@
 .qr-file-input {
   margin-top: 22px;
 }
-.event-72h-config {
+.event-weekend-tech-config {
   margin-top: 25px;
   max-width: 600px;
 }
@@ -967,16 +967,18 @@ small,
     #1b1214;
   overflow: hidden;
 }
-.giant-number {
-  font-size: clamp(8rem, 17vw, 16rem);
-  letter-spacing: -0.1em;
+.weekend-mark {
+  font-size: clamp(2.4rem, 6.2vw, 5.4rem);
+  letter-spacing: -0.06em;
   font-weight: 900;
   color: #bc2933;
-  line-height: 1;
+  line-height: 1.1;
+  text-align: center;
   transform: rotate(-8deg);
 }
-.giant-number span {
-  font-size: 0.4em;
+.weekend-mark span {
+  display: block;
+  font-size: 0.8em;
 }
 .graphic-label {
   position: absolute;
@@ -2085,8 +2087,8 @@ td small {
   .club-graphic {
     max-height: 340px;
   }
-  .giant-number {
-    font-size: 11rem;
+  .weekend-mark {
+    font-size: clamp(2.4rem, 10vw, 5rem);
   }
   .site-footer {
     padding: 35px 20px calc(25px + env(safe-area-inset-bottom, 0px));
